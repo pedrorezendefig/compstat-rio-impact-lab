@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CompStat Rio — Utilidade por Fonte</title>
+<meta name="description" content="Plataforma de inteligência territorial de segurança pública do Rio. Visão geral dos dados, do modelo das 3 camadas e do conceito do bingo.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700;800&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/compstat.css">
+</head>
+<body>
+<div class="progress" aria-hidden="true"></div>
+
+<nav class="nav">
+  <a class="brand" href="index.html">COMPSTAT<span class="dot">://</span><b>RIO</b></a>
+  <button class="nav-toggle" aria-expanded="false" aria-controls="tabs">MENU</button>
+  <div class="nav-tabs" id="tabs">
+    <a href="index.html"><span class="ix">00</span>Visão geral</a>
+    <a href="01-arquitetura-de-dados.html"><span class="ix">01</span>Dados</a>
+    <a href="02-utilidades-por-fonte.html" aria-current="page"><span class="ix">02</span>Utilidades</a>
+    <a href="03-possibilidades.html"><span class="ix">03</span>Possibilidades</a>
+    <a href="04-como-comecar.html"><span class="ix">04</span>Como começar</a>
+  </div>
+</nav>
+
+<!-- ===================== HEADER ===================== -->
+<header class="section wrap" style="padding-top:clamp(30px,5vw,60px)">
+  <span class="kicker reveal">§ 02 · Utilidade por fonte</span>
+  <h1 class="reveal" data-d="1" style="font-size:clamp(2rem,5vw,3.4rem);margin:14px 0 18px">Utilidade de Cada Fonte</h1>
+  <p class="lede reveal" data-d="2">Para que serve cada dado, lido no contexto do modelo CompStat: que pergunta responde, que módulo alimenta, força e limitação.</p>
+  <p class="muted reveal" data-d="3" style="margin-top:14px">Para que serve cada dado, lido no contexto do modelo CompStat: que <strong>pergunta operacional</strong> ele ajuda a responder, que <strong>módulo do relatório</strong> alimenta, e qual sua <strong>força e limitação</strong>. Voltar para a <a class="inline" href="index.html">visão geral</a> · ver <a class="inline" href="01-arquitetura-de-dados.html">schemas</a>.</p>
+</header>
+
+<!-- ===================== § 02.1 — AS 4 PERGUNTAS ===================== -->
+<section class="section wrap">
+  <div class="section-head reveal"><span class="six">§ 02.1</span><h2>As 4 perguntas do CompStat × dados disponíveis</h2></div>
+  <p class="reveal">O produto existe para automatizar quatro respostas. Eis a leitura de viabilidade com os dados reais:</p>
+  <div class="table-wrap reveal" data-d="1">
+    <table>
+      <thead>
+        <tr>
+          <th>Pergunta operacional</th>
+          <th>Resposta algorítmica</th>
+          <th>Fontes</th>
+          <th>Viabilidade hoje</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Onde</strong> patrulhar (maior incidência)?</td>
+          <td>Mapa de calor de roubos por trecho/área</td>
+          <td>Ocorrências + Polígonos FM</td>
+          <td>🟢 <strong>Alta</strong> — 115k pontos georreferenciados</td>
+        </tr>
+        <tr>
+          <td><strong>Quando</strong> patrulhar (horário de pico)?</td>
+          <td>Matriz hora × dia da semana</td>
+          <td>Ocorrências (<code>hora</code>, <code>dia_semana</code>)</td>
+          <td>🟢 <strong>Alta</strong> — temporal completo (achado revisado)</td>
+        </tr>
+        <tr>
+          <td><strong>Como</strong> empregar a FM (moto/viatura/a pé)?</td>
+          <td>Modalidade cruzada com modus operandi</td>
+          <td>Dinâmica criminal (DD + RELINT) + ocorrências</td>
+          <td>🟡 <strong>Média</strong> — exige síntese de texto; restrição de 600 agentes</td>
+        </tr>
+        <tr>
+          <td><strong>Como</strong> os órgãos resolvem os fatores?</td>
+          <td>Match fator → órgão responsável</td>
+          <td>Fatores urbanos (+ 1746, CPSR)</td>
+          <td>🟢 <strong>Alta</strong> — órgão já vem no dado</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ===================== § 02.2 — OS 6 MÓDULOS ===================== -->
+<section class="section wrap">
+  <div class="section-head reveal"><span class="six">§ 02.2</span><h2>Os 6 módulos do relatório × dados que os alimentam</h2></div>
+  <div class="table-wrap reveal">
+    <table>
+      <thead>
+        <tr>
+          <th>Módulo do relatório</th>
+          <th>Fontes que o alimentam</th>
+          <th>Observação</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1. Resumo executivo (respostas às 4 perguntas)</td>
+          <td>todas (síntese via LLM)</td>
+          <td>gerado por IA, validado por humano</td>
+        </tr>
+        <tr>
+          <td>2. Mapa de calor</td>
+          <td>Ocorrências + Polígonos FM</td>
+          <td>sobreposição mancha × área</td>
+        </tr>
+        <tr>
+          <td>3. Análise temporal</td>
+          <td>Ocorrências (<code>hora</code>/<code>dia_semana</code>/<code>mes</code>)</td>
+          <td>identifica picos (ex.: 19h às quartas)</td>
+        </tr>
+        <tr>
+          <td>4. Dinâmica criminal</td>
+          <td>Disque Denúncia + RELINTs + Domínio territorial</td>
+          <td>síntese qualitativa</td>
+        </tr>
+        <tr>
+          <td>5. Fatores urbanos</td>
+          <td>Fatores urbanos + CPSR + Central 1746</td>
+          <td>mapeados pelas subprefeituras/órgãos</td>
+        </tr>
+        <tr>
+          <td>6. Painel de coincidências + plano de ação</td>
+          <td>cruzamento das 3 camadas + Matriz Fatores×Órgãos</td>
+          <td>"bingos" priorizados + responsabilização</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ===================== § 02.3 — FICHA DE UTILIDADE POR FONTE ===================== -->
+<section class="section wrap">
+  <div class="section-head reveal"><span class="six">§ 02.3</span><h2>Ficha de utilidade por fonte</h2></div>
+  <div class="grid cols-2">
+
+    <article class="card l-mancha reveal">
+      <span class="tag">🔴 Mancha</span>
+      <h3>Ocorrências criminais — <em>o esqueleto quantitativo</em></h3>
+      <p><strong>Responde:</strong> Onde e Quando. <strong>Alimenta:</strong> mapa de calor, análise temporal, score.</p>
+      <p><strong>Força:</strong> 115k registros, 5 anos, temporal e espacial completos, 99,97% de coords válidas. É a fonte mais robusta do acervo.</p>
+      <p><strong>Limitação:</strong> só roubo (sem furto); granularidade de trecho depende de agregar por área ou snapping (não há geometria de segmento). Possível viés de subnotificação por região.</p>
+    </article>
+
+    <article class="card l-dinamica reveal" data-d="1">
+      <span class="tag">🔵 Dinâmica</span>
+      <h3>Disque Denúncia — <em>o "como" e o "quem" da rua</em></h3>
+      <p><strong>Responde:</strong> Como empregar a FM (modus operandi). <strong>Alimenta:</strong> dinâmica criminal.</p>
+      <p><strong>Força:</strong> 18k denúncias, taxonomia rica (classe/tipo), texto livre com modus operandi, rotinas e pontos de droga. Cobre 2019-2026.</p>
+      <p><strong>Limitação:</strong> geolocalização/relato em só ~21%; é <strong>indício não verificado</strong>; PII e LGPD; coords ruidosas. Use para <strong>enriquecer</strong> a leitura qualitativa, não como contagem.</p>
+    </article>
+
+    <article class="card l-fator reveal" data-d="2">
+      <span class="tag">🟡 Fator</span>
+      <h3>Fatores urbanos — <em>a ponte para a ação dos órgãos</em></h3>
+      <p><strong>Responde:</strong> Como os órgãos resolvem. <strong>Alimenta:</strong> módulo de fatores + plano de ação.</p>
+      <p><strong>Força:</strong> já traz o <strong>fator + o órgão responsável + a subárea</strong>, georreferenciado. É o que conecta o crime à intervenção urbana — coração da premissa do produto.</p>
+      <p><strong>Limitação:</strong> só 2.085 pontos, concentrados nas subáreas monitoradas; <code>valido</code> em ~60%; cuidado com o nome das coordenadas (invertido).</p>
+    </article>
+
+    <article class="card l-suporte reveal">
+      <span class="tag">⚪ Suporte</span>
+      <h3>Polígonos FM — <em>a unidade de análise</em></h3>
+      <p><strong>Responde:</strong> recorta todas as outras camadas por área operacional. <strong>Alimenta:</strong> todos os módulos (define o "por área").</p>
+      <p><strong>Força:</strong> define o território de patrulhamento; CRS WGS84 pronto para cruzar com os pontos.</p>
+      <p><strong>Limitação:</strong> só 8 áreas hoje (de 22 previstas).</p>
+    </article>
+
+    <article class="card l-dinamica reveal" data-d="1">
+      <span class="tag">🔵 Dinâmica</span>
+      <h3>RELINTs — <em>o gabarito do entregável + dinâmica rica</em></h3>
+      <p><strong>Responde:</strong> Como empregar a FM. <strong>Alimenta:</strong> dinâmica criminal <strong>e</strong> define o formato de saída.</p>
+      <p><strong>Força:</strong> descreve rotas de fuga, pontos cegos, modus operandi e já traz <strong>ações recomendadas</strong> no formato esperado pelo cliente. Duplo papel: dado de entrada <strong>e</strong> molde de saída.</p>
+      <p><strong>Limitação:</strong> 8 relatórios, texto não estruturado (exige LLM para extrair).</p>
+    </article>
+
+    <article class="card l-suporte reveal" data-d="2">
+      <span class="tag">⚪ Suporte</span>
+      <h3>Câmeras — <em>cobertura e pontos cegos</em></h3>
+      <p><strong>Responde:</strong> suporte ao Onde (vigilância). <strong>Alimenta:</strong> mapa de calor (sobrepõe câmeras) + desafio extra de cobertura.</p>
+      <p><strong>Força:</strong> 985 pontos com <code>id_trecho</code>; permite cruzar crime × vigilância.</p>
+      <p><strong>Limitação:</strong> só 9 áreas; falta a malha de trechos para fechar o <code>id_trecho</code>.</p>
+    </article>
+
+    <article class="card l-dinamica reveal">
+      <span class="tag">🔵 Dinâmica</span>
+      <h3>Domínio territorial — <em>contexto de facção e rota de fuga</em></h3>
+      <p><strong>Responde:</strong> contextualiza a dinâmica (controle territorial, receptação, fuga). <strong>Alimenta:</strong> dinâmica criminal.</p>
+      <p><strong>Força:</strong> polígonos de facção (CV/Milícia/TCP/ADA) para entender para onde o crime "escoa".</p>
+      <p><strong>Limitação:</strong> origem colaborativa (não oficial), cobre além do Rio, geometrias corrompidas. <strong>Indício</strong>, com filtro espacial.</p>
+    </article>
+
+    <article class="card l-fator reveal" data-d="1">
+      <span class="tag">🟡 Fator</span>
+      <h3>CPSR — <em>fator urbano SMAS + evolução temporal</em></h3>
+      <p><strong>Responde:</strong> Como os órgãos (SMAS) atuam sobre PSR. <strong>Alimenta:</strong> fatores urbanos.</p>
+      <p><strong>Força:</strong> 3 ondas (2020/22/24) georreferenciadas → concentração e <strong>evolução</strong> de PSR por território.</p>
+      <p><strong>Limitação:</strong> microdado individual sensível — usar <strong>agregado</strong> por território/ano.</p>
+    </article>
+
+    <article class="card l-fator reveal" data-d="2">
+      <span class="tag">🟡 Fator</span>
+      <h3>Central 1746 — <em>validação cidadã do fator urbano</em></h3>
+      <p><strong>Responde:</strong> reforça Como os órgãos resolvem. <strong>Alimenta:</strong> fatores urbanos (validação).</p>
+      <p><strong>Força:</strong> base pública massiva; "poste apagado", "poda", "lixo" confirmam o levantamento de campo.</p>
+      <p><strong>Limitação:</strong> externa (BigQuery, precisa de credencial); volume alto exige filtro por área/assunto.</p>
+    </article>
+
+  </div>
+</section>
+
+<!-- ===================== § 02.4 — MATRIZ FATORES × ÓRGÃOS ===================== -->
+<section class="section wrap">
+  <div class="section-head reveal"><span class="six">§ 02.4</span><h2>Matriz Fatores Urbanos × Órgãos Responsáveis</h2></div>
+  <p class="reveal">Referência operacional para o módulo "plano de ação" (consolidada do <code>README</code> do repositório). Liga cada fator ao órgão que o resolve — é o que pré-popula a <strong>matriz de responsabilização</strong>.</p>
+  <div class="table-wrap reveal" data-d="1">
+    <table>
+      <thead>
+        <tr>
+          <th>Categoria</th>
+          <th>Fator</th>
+          <th>Órgão responsável</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Iluminação</td>
+          <td>Área mal iluminada (circulação de pedestres / parada de veículos)</td>
+          <td><strong>RioLuz</strong></td>
+        </tr>
+        <tr>
+          <td>Vegetação</td>
+          <td>Vegetação encobrindo iluminação / obstruindo visibilidade</td>
+          <td><strong>Comlurb</strong></td>
+        </tr>
+        <tr>
+          <td>Limpeza urbana</td>
+          <td>Lixo/entulho obstruindo visibilidade ou forçando pedestre à pista</td>
+          <td><strong>Comlurb</strong></td>
+        </tr>
+        <tr>
+          <td>Obstrução de logradouro</td>
+          <td>Mobiliário/calçada estreita desviando pedestre à pista</td>
+          <td><strong>Seconserva</strong></td>
+        </tr>
+        <tr>
+          <td>Refúgio</td>
+          <td>Mobiliário/tapume/vão servindo de esconderijo</td>
+          <td><strong>Seconserva</strong></td>
+        </tr>
+        <tr>
+          <td>Obstrução (comércio)</td>
+          <td>Comércio irregular obstruindo visibilidade</td>
+          <td><strong>SEOP</strong></td>
+        </tr>
+        <tr>
+          <td>Trânsito</td>
+          <td>Ponto de retenção de tráfego</td>
+          <td><strong>CET-Rio</strong></td>
+        </tr>
+        <tr>
+          <td>Trânsito</td>
+          <td>Estacionamento irregular / veículos de grande porte</td>
+          <td><strong>SEOP</strong></td>
+        </tr>
+        <tr>
+          <td>Trânsito</td>
+          <td>Motocicletas/bicicletas no passeio</td>
+          <td><strong>GM-Rio</strong></td>
+        </tr>
+        <tr>
+          <td>Ponto de ônibus</td>
+          <td>Ponto com histórico de vandalismo</td>
+          <td><strong>SMTR</strong></td>
+        </tr>
+        <tr>
+          <td>Pessoa em situação de rua</td>
+          <td>Adultos / crianças / famílias</td>
+          <td><strong>SMAS</strong></td>
+        </tr>
+        <tr>
+          <td>Cena de uso de drogas</td>
+          <td>Eventual / crônica</td>
+          <td><strong>SMAS</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout callout--info reveal" data-d="2"><span class="ic">🗂️</span><p>Os valores reais de <code>orgao_responsavel</code> no dataset de fatores confirmam essa distribuição (COMLURB, SMAS, SEOP, Rio Luz, SECONSERVA, CET-Rio, GM-Rio, SMTR). A matriz é, portanto, <strong>diretamente preenchível a partir do dado</strong>.</p></div>
+</section>
+
+<!-- ===================== § 02.5 — SÍNTESE: FORÇA DO ACERVO ===================== -->
+<section class="section wrap">
+  <div class="section-head reveal"><span class="six">§ 02.5</span><h2>Síntese: força do acervo por camada</h2></div>
+  <div class="diagram reveal">
+    <div class="diagram-cap">Força do acervo por camada</div>
+    <pre class="mermaid">
+flowchart LR
+    subgraph A["🟢 Pronto para usar"]
+        OC[Ocorrências: onde+quando]
+        FU[Fatores: o quê+quem]
+        FM[Áreas FM: recorte]
+    end
+    subgraph B["🟡 Exige IA / tratamento"]
+        DD[Disque Denúncia]
+        RL[RELINTs]
+        CPSR[CPSR agregado]
+    end
+    subgraph C["🟠 Exige filtro/fonte externa"]
+        DT[Domínio territorial]
+        C1746[Central 1746]
+        SEG[Malha de trechos]
+    end
+    A --&gt; BINGO{{Bingo / Score}}
+    B --&gt; BINGO
+    C -.-&gt; BINGO
+</pre>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="footer"><div class="wrap">
+  <p class="sig">COMPSTAT://RIO · Claude Impact Lab 2026 · <a class="inline" href="index.html">↑ Visão geral</a> · <a class="inline" href="01-arquitetura-de-dados.html">← 01 · Dados</a> · <a class="inline" href="03-possibilidades.html">03 · Possibilidades →</a></p>
+</div></footer>
+<div class="grain" aria-hidden="true"></div>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="assets/compstat.js"></script>
+</body>
+</html>

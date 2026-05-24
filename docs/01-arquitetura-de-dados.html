@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CompStat Rio — Arquitetura de Dados</title>
+<meta name="description" content="Catálogo técnico de todas as fontes de dados do CompStat Rio — formato, volume e schema real verificado no arquivo.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700;800&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/compstat.css">
+</head>
+<body>
+<div class="progress" aria-hidden="true"></div>
+
+<nav class="nav">
+  <a class="brand" href="index.html">COMPSTAT<span class="dot">://</span><b>RIO</b></a>
+  <button class="nav-toggle" aria-expanded="false" aria-controls="tabs">MENU</button>
+  <div class="nav-tabs" id="tabs">
+    <a href="index.html"><span class="ix">00</span>Visão geral</a>
+    <a href="01-arquitetura-de-dados.html" aria-current="page"><span class="ix">01</span>Dados</a>
+    <a href="02-utilidades-por-fonte.html"><span class="ix">02</span>Utilidades</a>
+    <a href="03-possibilidades.html"><span class="ix">03</span>Possibilidades</a>
+    <a href="04-como-comecar.html"><span class="ix">04</span>Como começar</a>
+  </div>
+</nav>
+
+<!-- ===================== CABEÇALHO DE PÁGINA ===================== -->
+<header class="section wrap" style="padding-top:clamp(30px,5vw,60px)">
+  <span class="kicker reveal">§ 01 · Arquitetura de dados</span>
+  <h1 class="reveal" data-d="1" style="font-size:clamp(2rem,5vw,3.4rem);margin:14px 0 18px">Arquitetura de Dados</h1>
+  <p class="lede reveal" data-d="2">Catálogo técnico de todas as fontes — formato, volume e schema real verificado no arquivo.</p>
+  <p class="muted reveal" data-d="3">Cada ficha traz formato, volume e <strong>schema real verificado no arquivo</strong> (não no que o dicionário promete — onde os dois divergem, está sinalizado). Voltar para a <a class="inline" href="index.html">visão geral</a>.</p>
+</header>
+
+<!-- ===================== § 01.1 — MODELO DE DADOS ===================== -->
+<section class="section wrap">
+  <div class="section-head reveal"><span class="six">§ 01.1</span><h2>Modelo de dados e chaves de junção</h2></div>
+  <p class="reveal">Não existe uma chave primária comum entre as fontes. A integração é <strong>majoritariamente espacial</strong> (coordenadas e polígonos) e, secundariamente, por <strong>nome de área/subárea</strong> e <strong>bairro</strong>.</p>
+
+  <div class="diagram reveal" data-d="1"><div class="diagram-cap">Modelo de dados · chaves de junção</div>
+<pre class="mermaid">
+flowchart LR
+    subgraph PONTOS["Fontes pontuais (lat/long)"]
+        OC[Ocorrências]
+        DD[Disque Denúncia]
+        FU[Fatores urbanos]
+        CAM[Câmeras]
+        CPSR[CPSR]
+    end
+    subgraph POLIGONOS["Fontes de área (polígono)"]
+        FM[Polígonos FM<br/>8 áreas]
+        DT[Domínio territorial<br/>facções]
+    end
+    subgraph TEXTO["Fontes textuais"]
+        RL[RELINTs<br/>por área]
+    end
+
+    FM -- "ST_Contains / point-in-polygon" --> PONTOS
+    DT -- "interseção espacial" --> PONTOS
+    CAM -- "id_trecho" --> SEG[(segmento viário)]
+    FU -. "nome de subárea (texto)" .-> FM
+    CAM -. "nome_area_fm (texto)" .-> FM
+    RL -. "nome da área (texto)" .-> FM
+    PONTOS -. "bairro (texto)" .-> PONTOS
+</pre></div>
+
+  <h3 class="reveal" style="margin-top:26px;font-size:1.18rem">Chaves disponíveis, da mais forte para a mais fraca:</h3>
+  <div class="table-wrap reveal">
+    <table>
+      <thead>
+        <tr><th>Chave</th><th>Liga</th><th>Observação</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Coordenadas lat/long</strong></td><td>todas as fontes pontuais ↔ polígonos</td><td>A mais confiável. Permite point-in-polygon e proximidade (buffer). É o eixo do "bingo".</td></tr>
+        <tr><td><strong>Polígono de área FM</strong></td><td>recorta ocorrências, denúncias, fatores, câmeras, CPSR por área</td><td>Só 8 áreas têm polígono hoje.</td></tr>
+        <tr><td><strong><code>id_trecho</code></strong></td><td>câmeras ↔ segmento viário</td><td>Presente só em câmeras; falta a base de geometria dos trechos para fechar o elo (ver §11).</td></tr>
+        <tr><td><strong>Nome de área / subárea</strong> (texto)</td><td>fatores ↔ câmeras ↔ shapefile ↔ RELINT</td><td>Requer normalização de string (grafias diferentes entre fontes).</td></tr>
+        <tr><td><strong>Bairro</strong> (texto)</td><td>ocorrências, denúncias, fatores, CPSR</td><td>Granularidade grossa; bom para agregação, ruim para trecho.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="reveal" style="margin-top:26px;font-size:1.18rem">Mapeamento fonte → camada do modelo:</h3>
+  <div class="table-wrap reveal">
+    <table>
+      <thead>
+        <tr><th>Camada</th><th>Fontes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>🔴 <strong>Mancha criminal</strong> (quantitativa)</td><td>Ocorrências</td></tr>
+        <tr><td>🟡 <strong>Fator urbano</strong> (ambiental)</td><td>Fatores urbanos · CPSR · Central 1746</td></tr>
+        <tr><td>🔵 <strong>Dinâmica criminal</strong> (qualitativa)</td><td>Disque Denúncia · RELINTs · Domínio territorial</td></tr>
+        <tr><td>⚪ <strong>Suporte territorial/operacional</strong></td><td>Polígonos FM · Câmeras</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ===================== § 01.2 — OCORRÊNCIAS ===================== -->
+<section class="section wrap">
+  <div class="section-head reveal"><span class="six">§ 01.2</span><h2>Ocorrências criminais 🔴</h2></div>
+  <p class="reveal"><span class="chip l-mancha"><span class="swatch"></span>Mancha criminal</span></p>
+
+  <div class="table-wrap reveal" data-d="1">
+    <table>
+      <thead>
+        <tr><th>Campo</th><th>Valor</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Arquivo</strong></td><td><code>dados/df_ocorrencias_tratado - Extração 1 .csv</code> (24 MB)</td></tr>
+        <tr><td><strong>Formato</strong></td><td>CSV, separador <code>,</code>, encoding UTF-8, ponto decimal</td></tr>
+        <tr><td><strong>Volume</strong></td><td><strong>115.354 linhas</strong> × 14 colunas</td></tr>
+        <tr><td><strong>Período</strong></td><td><code>ano</code> 2020–2024 (26.870 / 25.931 / 21.890 / 18.077 / 22.586)</td></tr>
+        <tr><td><strong>Geometria</strong></td><td>WKT <code>POINT(long lat)</code> na coluna <code>geometria</code></td></tr>
+        <tr><td><strong>Escopo</strong></td><td>apenas cidade do Rio (dicionário)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="table-wrap reveal">
+    <table>
+      <thead>
+        <tr><th>Coluna</th><th>Tipo</th><th>Descrição</th><th>Exemplo</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>id_criptografado</code></td><td>texto (hash)</td><td>ID único da ocorrência</td><td><code>0259749...</code></td></tr>
+        <tr><td><code>ano</code></td><td>int</td><td>Ano do fato ✅ confiável</td><td><code>2023</code></td></tr>
+        <tr><td><code>data</code></td><td>data</td><td>Data do fato ⚠️ <strong>ano corrompido</strong></td><td><code>26/03/1924</code></td></tr>
+        <tr><td><code>mes</code></td><td>int</td><td>Mês do fato ✅</td><td><code>5</code></td></tr>
+        <tr><td><code>hora</code></td><td>hora</td><td>Hora do fato ✅ <code>HH:MM:SS</code></td><td><code>19:40:00</code></td></tr>
+        <tr><td><code>delito</code></td><td>int (cód.)</td><td>Código do delito</td><td><code>15</code></td></tr>
+        <tr><td><code>desc_delito</code></td><td>texto</td><td>Descrição do delito</td><td><code>Roubo a transeunte</code></td></tr>
+        <tr><td><code>longitude</code> / <code>latitude</code></td><td>float</td><td>Coordenadas</td><td><code>-43.26</code>, <code>-22.86</code></td></tr>
+        <tr><td><code>aisp</code></td><td>int</td><td>Área Integrada de Seg. Pública (PMERJ)</td><td><code>16</code></td></tr>
+        <tr><td><code>risp</code></td><td>int</td><td>Região Integrada de Seg. Pública</td><td><code>1</code></td></tr>
+        <tr><td><code>locf</code></td><td>texto</td><td>Logradouro do fato</td><td><code>Rua arapa</code></td></tr>
+        <tr><td><code>dia_semana</code></td><td>texto</td><td>Dia da semana ✅</td><td><code>Quarta</code></td></tr>
+        <tr><td><code>geometria</code></td><td>WKT</td><td>Ponto</td><td><code>POINT(-43.26 -22.86)</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="reveal"><strong>Distribuição dos delitos (3 tipos, todos roubo):</strong> Roubo a transeunte 69.697 · Roubo de aparelho celular 33.288 · Roubo em coletivo 12.369. <strong>17 AISPs, 2 RISPs.</strong></p>
+
+  <h3 class="reveal" style="margin-top:24px;font-size:1.18rem">Achados de qualidade:</h3>
+  <div class="callout callout--ok reveal"><span class="ic">✅</span><p><strong>Temporal completo:</strong> <code>hora</code>, <code>dia_semana</code> e <code>mes</code> preenchidos em 99,98% (só 22 linhas vazias). <strong>A análise por horário/dia é totalmente viável</strong> — desmente a suposição inicial de que faltava granularidade temporal.</p></div>
+  <div class="callout callout--warn reveal"><span class="ic">⚠️</span><p>A coluna <strong><code>data</code> tem o ano corrompido</strong> (aparecem 1924, 1972, 1980…) e <strong>não bate com <code>ano</code></strong>. Use <code>ano</code> + <code>mes</code> + <code>hora</code> + <code>dia_semana</code>; ignore o ano de <code>data</code>.</p></div>
+  <div class="callout callout--warn reveal"><span class="ic">⚠️</span><p><strong>Sem furto:</strong> apesar de o dicionário dizer "roubos e furtos", só há 3 tipos de <strong>roubo</strong>. Furto não está representado.</p></div>
+  <div class="callout callout--warn reveal"><span class="ic">⚠️</span><p>Dicionário diz cobertura <strong>"2023 e 2024"</strong>, mas os dados vão de <strong>2020 a 2024</strong>. E lista a coluna <code>rgocronu</code> (o CSV usa <code>id_criptografado</code>).</p></div>
+  <div class="callout callout--ok reveal"><span class="ic">✅</span><p>Coordenadas 99,97% válidas; 36 linhas corrompidas (ex.: <code>-22806</code>) — filtrar por bounding box do Rio.</p></div>
+</section>
+
+<!-- ===================== § 01.3 — DISQUE DENÚNCIA ===================== -->
+<section class="section wrap">
+  <div class="section-head reveal"><span class="six">§ 01.3</span><h2>Disque Denúncia 🔵</h2></div>
+  <p class="reveal"><span class="chip l-dinamica"><span class="swatch"></span>Dinâmica criminal</span></p>
+
+  <div class="table-wrap reveal" data-d="1">
+    <table>
+      <thead>
+        <tr><th>Campo</th><th>Valor</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Arquivo</strong></td><td><code>dados/disk_denuncia.csv</code> (19 MB)</td></tr>
+        <tr><td><strong>Formato</strong></td><td>CSV, separador <strong><code>;</code></strong>, encoding <strong>latin-1 (ISO-8859-1)</strong>, <strong>vírgula decimal</strong></td></tr>
+        <tr><td><strong>Volume</strong></td><td><strong>83.549 linhas = 18.003 denúncias</strong> + 65.546 linhas de explosão</td></tr>
+        <tr><td><strong>Período</strong></td><td><code>data_denuncia</code> 2019–2026</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="reveal"><strong>Estrutura "explodida":</strong> cada denúncia gera várias linhas (uma por órgão/assunto vinculado). Só as <strong>18.003 linhas-cabeça</strong> (com <code>numero_denuncia</code> preenchido) trazem localização e relato; as demais repetem só os campos de órgão/assunto. As colunas têm notação de JSON achatado (<code>assuntos.*</code>, <code>envolvidos.*</code>).</p>
+
+  <p class="reveal">Colunas principais (48 no total):</p>
+  <div class="table-wrap reveal">
+    <table>
+      <thead>
+        <tr><th>Bloco</th><th>Colunas</th><th>Descrição</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Identificação</td><td><code>numero_denuncia</code>, <code>id_denuncia</code>, <code>data_denuncia</code>, <code>data_difusao</code>, <code>status_denuncia</code></td><td>datas em DATETIME GMT-3</td></tr>
+        <tr><td>Localização</td><td><code>tipo_logradouro</code>, <code>logradouro</code>, <code>numero_logradouro</code>, <code>bairro_logradouro</code>, <code>cep_logradouro</code>, <code>referencia_logradouro</code>, <code>municipio</code>, <code>estado</code>, <strong><code>latitude</code></strong>, <strong><code>longitude</code></strong></td><td>lat/long com vírgula decimal</td></tr>
+        <tr><td>Órgãos</td><td><code>orgaos.id</code>, <code>orgaos.nome</code>, <code>orgaos.tipo</code></td><td>órgão de destino da denúncia</td></tr>
+        <tr><td>Classificação</td><td><code>assuntos.classe</code>, <code>assuntos.tipos.tipo</code>, <code>assuntos.tipos.assunto_principal</code> (+ campos <code>classe</code>/<code>tipo</code> duplicados)</td><td>taxonomia do crime</td></tr>
+        <tr><td><strong>Envolvidos</strong> ⚠️</td><td><code>envolvidos.nome</code>, <code>.vulgo</code>, <code>.sexo</code>, <code>.idade</code>, <code>.pele</code>, <code>.estatura</code>, <code>.porte</code>, <code>.cabelos</code>, <code>.olhos</code>, <code>.outras_caracteristicas</code></td><td>descrição de suspeitos</td></tr>
+        <tr><td>Relato</td><td><strong><code>relato_redacted</code></strong></td><td>texto livre da denúncia, com PII mascarada (<code>[NOME]</code>)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="reveal"><strong>Classes mais frequentes:</strong> Substâncias entorpecentes (10.961) · <strong>Crimes contra o patrimônio (10.423)</strong> · Armas de fogo (4.213) · Crimes contra criança/adolescente (2.366). <strong>Tipos:</strong> Consumo de drogas (9.592) · <strong>Roubo/furto a transeunte (7.670)</strong> · Posse ilícita de armas (3.981) · Tráfico (2.543) · Roubo a motoristas (770).</p>
+
+  <h3 class="reveal" style="margin-top:24px;font-size:1.18rem">Achados de qualidade:</h3>
+  <div class="callout callout--warn reveal"><span class="ic">⚠️</span><p><strong>Geolocalização e relato preenchidos em só ~21%</strong> das linhas (nas cabeças). De ~18k denúncias, nem todas têm coordenada utilizável; algumas coordenadas estão fora do Rio (até <code>-7.28</code>, NE do Brasil).</p></div>
+  <div class="callout callout--warn reveal"><span class="ic">⚠️</span><p><strong>Encoding latin-1</strong> e <strong>separador <code>;</code></strong> — ler com <code>sep=';', encoding='latin-1'</code>, senão acentos viram <code>�</code>.</p></div>
+  <div class="callout callout--warn reveal"><span class="ic">⚠️</span><p><strong>LGPD:</strong> o bloco <code>envolvidos.*</code> descreve pessoas e o <code>relato</code> é texto livre (já redigido). Tratar como <strong>indício</strong>, citar a fonte e sinalizar incerteza (guardrail §13).</p></div>
+</section>
+
+<!-- ===================== § 01.4 — FATORES URBANOS ===================== -->
+<section class="section wrap">
+  <div class="section-head reveal"><span class="six">§ 01.4</span><h2>Fatores urbanos 🟡</h2></div>
+  <p class="reveal"><span class="chip l-fator"><span class="swatch"></span>Fator urbano</span></p>
+
+  <div class="table-wrap reveal" data-d="1">
+    <table>
+      <thead>
+        <tr><th>Campo</th><th>Valor</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Arquivo</strong></td><td><code>dados/fatores_urbanos.csv</code> (1,3 MB)</td></tr>
+        <tr><td><strong>Formato</strong></td><td>CSV, separador <code>,</code>, UTF-8</td></tr>
+        <tr><td><strong>Volume</strong></td><td><strong>2.085 registros</strong> × 31 colunas</td></tr>
+        <tr><td><strong>Geometria</strong></td><td>colunas <code>coordenada_x</code> / <code>coordenada_y</code> (ver alerta)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="table-wrap reveal">
+    <table>
+      <thead>
+        <tr><th>Coluna</th><th>Descrição</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>id_resposta_ocorrencia</code></td><td>ID do registro de campo</td></tr>
+        <tr><td><code>logradouro</code>, <code>numero_porta</code>, <code>referencia</code>, <code>endereco_informado</code></td><td>endereço</td></tr>
+        <tr><td><strong><code>coordenada_x</code></strong></td><td>⚠️ <strong>na prática é a LATITUDE</strong> (≈ -22.9)</td></tr>
+        <tr><td><strong><code>coordenada_y</code></strong></td><td>⚠️ <strong>na prática é a LONGITUDE</strong> (≈ -43.x)</td></tr>
+        <tr><td><code>valido</code></td><td>registro validado (TRUE) ou não</td></tr>
+        <tr><td><code>id_bairro</code>, <code>bairro_nome</code></td><td>bairro (48 distintos)</td></tr>
+        <tr><td><code>id_subarea</code>, <code>subarea_nome</code></td><td><strong>subárea monitorada (23 distintas)</strong></td></tr>
+        <tr><td><code>tipo_ocorrencia_descricao</code></td><td><strong>o fator urbano observado</strong></td></tr>
+        <tr><td><code>orgao_responsavel</code></td><td>órgão que resolve</td></tr>
+        <tr><td><code>ocorrencia_informacao</code></td><td>instrução de campo ao agente (texto + <code>&lt;img&gt;</code>)</td></tr>
+        <tr><td><code>id_orgao_ocorrencia</code>, <code>ocorrencia_orgao_nome</code>, <code>codigo_ocorrencia_orgao</code></td><td>vínculo com o órgão</td></tr>
+        <tr><td><code>tipo_pessoa_descricao</code>, <code>ocupacao_pessoa_descricao</code>, <code>tipo_frequencia_descricao</code>, <code>ocupacao_drogas_descricao</code>, <code>item_praca_descricao</code></td><td>subcampos (PSR, drogas, praças)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="reveal"><strong>Fatores mais frequentes:</strong> Vegetação encobrindo iluminação (327) · Pessoas em situação de rua (285) · Vegetação obstruindo visibilidade (213) · Área mal iluminada (204) · Ponto de retenção do tráfego (191) · Comércio irregular (140)… <strong>Órgãos:</strong> COMLURB 583 · SMAS 341 · SEOP 308 · Rio Luz 231 · SECONSERVA 216 · CET-Rio 191 · GM-Rio 84 · SMTR 40.</p>
+
+  <h3 class="reveal" style="margin-top:24px;font-size:1.18rem">Achados de qualidade:</h3>
+  <div class="callout callout--crit reveal"><span class="ic">🚨</span><p><strong>Coordenadas com nome invertido:</strong> os <strong>valores reais</strong> mostram <code>coordenada_x</code> = latitude e <code>coordenada_y</code> = longitude — <strong>o oposto do que o dicionário afirma</strong> ("x = longitude, y = latitude"). <strong>Confie nos valores, não no nome/dicionário</strong>, ou os pontos cairão no lugar errado.</p></div>
+  <div class="callout callout--warn reveal"><span class="ic">⚠️</span><p>As 23 <code>subarea_nome</code> correspondem às áreas monitoradas ("22 áreas"); 821 registros sem subárea e 91 sem órgão.</p></div>
+  <div class="callout callout--warn reveal"><span class="ic">⚠️</span><p><code>valido = TRUE</code> em 1.264 de 2.085 (~60%); há o fator "Sem ocorrência" (62) = ponto vistoriado sem problema.</p></div>
+</section>
+
+<!-- ===================== § 01.5 — POLÍGONOS FM ===================== -->
+<section class="section wrap">
+  <div class="section-head reveal"><span class="six">§ 01.5</span><h2>Polígonos da Força Municipal ⚪</h2></div>
+  <p class="reveal"><span class="chip l-suporte"><span class="swatch"></span>Suporte territorial</span></p>
+
+  <div class="table-wrap reveal" data-d="1">
+    <table>
+      <thead>
+        <tr><th>Campo</th><th>Valor</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Arquivos</strong></td><td><code>sh_area_forca/areas_forca_municipal.{shp,shx,dbf,prj,cpg,qmd}</code></td></tr>
+        <tr><td><strong>Formato</strong></td><td>Shapefile · <strong>CRS WGS84 (EPSG:4326)</strong> (<code>.prj</code>) · encoding <strong>UTF-8</strong> (<code>.cpg</code>)</td></tr>
+        <tr><td><strong>Volume</strong></td><td><strong>8 polígonos de área</strong> · atributos <code>fid</code>, <code>nome_subarea</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="reveal">As 8 áreas (campo <code>fid</code>): <strong>2</strong> Rodoviária – Terminal Gentileza – Estação Leopoldina · <strong>9</strong> Metrô Botafogo – Rua São Clemente – Voluntários da Pátria · <strong>10</strong> Jardim de Alah · <strong>11</strong> Campo Grande: Estação de Trem – Calçadão · <strong>12</strong> Rio Sul · <strong>14</strong> Praia de Botafogo – Marquês de Abrantes · <strong>19</strong> Estações São Francisco Xavier – Afonso Pena · <strong>20</strong> Presidente Vargas – Campo de Santana – Central do Brasil – Cinelândia.</p>
+
+  <div class="callout callout--info reveal"><span class="ic">ℹ️</span><p><strong>Achados:</strong> os <code>fid</code> são <strong>não contíguos</strong> (2, 9, 10, 11, 12, 14, 19, 20) → este shapefile é um <strong>subconjunto</strong> de um cadastro maior de áreas. As 8 áreas batem <strong>1:1 com os 8 RELINTs</strong> (§6). O dicionário chama a fonte de <code>areas_fm_entrada</code> e menciona formato <code>gpkg</code>; o repositório entrega Shapefile.</p></div>
+</section>
+
+<!-- ===================== § 01.6 — RELINTs ===================== -->
+<section class="section wrap">
+  <div class="section-head reveal"><span class="six">§ 01.6</span><h2>RELINTs (Relatórios de Inteligência de Área) 🔵 / molde</h2></div>
+  <p class="reveal"><span class="chip l-dinamica"><span class="swatch"></span>Dinâmica criminal</span></p>
+
+  <div class="table-wrap reveal" data-d="1">
+    <table>
+      <thead>
+        <tr><th>Campo</th><th>Valor</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Arquivos</strong></td><td><code>relints/RI_010..017_2026_*.docx</code> (8 arquivos Word)</td></tr>
+        <tr><td><strong>Conteúdo</strong></td><td>relatórios qualitativos por área (≈40 parágrafos + 1 tabela cada)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="reveal" style="margin-top:24px;font-size:1.18rem">Estrutura padrão (é o gabarito do entregável principal):</h3>
+  <ol class="reveal">
+    <li>Título — <code>RELATÓRIO DE INTELIGÊNCIA DE ÁREA – COMPSTAT – DADOS PÚBLICOS</code></li>
+    <li><code>Subsídio para Reunião de CompStat</code></li>
+    <li><strong>Nome da área</strong> (ex.: <code>RODOVIÁRIA – TERMINAL GENTILEZA – ESTAÇÃO LEOPOLDINA</code>)</li>
+    <li>Parágrafo de abertura (objetivo da análise territorial)</li>
+    <li><strong>Por sub-local</strong> (2 a 4 por relatório): descrição + bloco <strong>"Também foram identificados:"</strong> (bullets de fatores: retenção de fluxo, baixa visibilidade, obstáculos, motos/bicicletas como rota de fuga, rotas de dispersão) + parágrafo <strong>"A dinâmica criminal observada indica…"</strong></li>
+    <li><strong>CONCLUSÃO</strong> — síntese + ações recomendadas (reforço de patrulhamento nos <strong>horários de pico 06h–09h e 17h–20h</strong>, melhoria de iluminação, fiscalização de obstáculos, ações de ordenamento/PSR) + parágrafo final de quando/onde os delitos ocorrem.</li>
+    <li><strong>1 tabela</strong> por relatório.</li>
+  </ol>
+
+  <div class="callout callout--info reveal"><span class="ic">ℹ️</span><p>Os 8 RELINTs cobrem exatamente as 8 áreas do shapefile. São a referência de formato e tom para a geração automática.</p></div>
+</section>
+
+<!-- ===================== § 01.7 — CÂMERAS ===================== -->
+<section class="section wrap">
+  <div class="section-head reveal"><span class="six">§ 01.7</span><h2>Câmeras ⚪</h2></div>
+  <p class="reveal"><span class="chip l-suporte"><span class="swatch"></span>Suporte territorial</span></p>
+
+  <div class="table-wrap reveal" data-d="1">
+    <table>
+      <thead>
+        <tr><th>Campo</th><th>Valor</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Arquivo</strong></td><td><code>dados/cameras_areas_fm.csv</code></td></tr>
+        <tr><td><strong>Volume</strong></td><td><strong>985 câmeras</strong> × 4 colunas · 9 áreas FM · 777 trechos</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="table-wrap reveal">
+    <table>
+      <thead>
+        <tr><th>Coluna</th><th>Descrição</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>id_ponto</code></td><td>ID único da câmera (UUID)</td></tr>
+        <tr><td><code>nome_area_fm</code></td><td>área de operação da FM</td></tr>
+        <tr><td><code>id_trecho</code></td><td><strong>trecho de logradouro</strong> onde a câmera está (chave de segmento)</td></tr>
+        <tr><td><code>geometry</code></td><td>WKT <code>POINT(long lat)</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="reveal"><strong>Cobertura:</strong> Rodoviária 310 · Presidente Vargas 230 · Praia de Botafogo 150 · Metrô Botafogo 80 · SFX–Afonso Pena 60 · Lauro Müller–Gen. Severiano 50 · Campo Grande 45 · Jardim de Alah 30 · Bangu 30.</p>
+  <div class="callout callout--warn reveal"><span class="ic">⚠️</span><p><strong>Achado:</strong> há a área "Lauro Müller…" que <strong>não</strong> está no shapefile de 8 áreas → cadastros de área não são idênticos entre fontes (normalizar).</p></div>
+</section>
+
+<!-- ===================== § 01.8 — DOMÍNIO TERRITORIAL ===================== -->
+<section class="section wrap">
+  <div class="section-head reveal"><span class="six">§ 01.8</span><h2>Domínio territorial (facções) 🔵</h2></div>
+  <p class="reveal"><span class="chip l-dinamica"><span class="swatch"></span>Dinâmica criminal</span></p>
+
+  <div class="table-wrap reveal" data-d="1">
+    <table>
+      <thead>
+        <tr><th>Campo</th><th>Valor</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Arquivo</strong></td><td><code>dados/outros dados/dominio_territorial - Extração 1.csv</code> (1,4 MB)</td></tr>
+        <tr><td><strong>Volume</strong></td><td><strong>1.628 territórios</strong> × 3 colunas · WKT <code>POLYGON</code></td></tr>
+        <tr><td><strong>Fonte</strong></td><td>mapa público colaborativo <strong>"Direto do Miolo"</strong> (@diretodomiolo no X)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="table-wrap reveal">
+    <table>
+      <thead>
+        <tr><th>Coluna</th><th>Descrição</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>nome_territorio</code></td><td>comunidade/complexo/localidade</td></tr>
+        <tr><td><code>dominio_orcrim</code></td><td>facção dominante</td></tr>
+        <tr><td><code>geometria</code></td><td>polígono WKT</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="reveal"><strong>Facções:</strong> CV 903 · Milícia 423 · TCP 229 · ADA 73.</p>
+
+  <h3 class="reveal" style="margin-top:24px;font-size:1.18rem">Achados de qualidade:</h3>
+  <div class="callout callout--warn reveal"><span class="ic">⚠️</span><p><strong>Confiabilidade:</strong> vem de mapa colaborativo público, <strong>não de inteligência oficial</strong> — tratar como contexto/indício.</p></div>
+  <div class="callout callout--crit reveal"><span class="ic">🚨</span><p><strong>Escopo e geometria:</strong> a latitude dos polígonos vai de <code>-23.5</code> a <strong><code>+33.3</code></strong> (valor impossível) → a base <strong>cobre além da cidade do Rio</strong> e tem <strong>geometrias corrompidas</strong>. Filtrar para o bounding box do município antes de usar.</p></div>
+</section>
+
+<!-- ===================== § 01.9 — CPSR ===================== -->
+<section class="section wrap">
+  <div class="section-head reveal"><span class="six">§ 01.9</span><h2>Censo de Pessoas em Situação de Rua (CPSR) 🟡</h2></div>
+  <p class="reveal"><span class="chip l-fator"><span class="swatch"></span>Fator urbano</span></p>
+
+  <div class="table-wrap reveal" data-d="1">
+    <table>
+      <thead>
+        <tr><th>Campo</th><th>Valor</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Arquivo</strong></td><td><code>dados/outros dados/CPSR_2020_2022_2024.xlsx</code> (11 MB) · aba <code>Censo_histórico</code></td></tr>
+        <tr><td><strong>Volume</strong></td><td><strong>23.332 pessoas</strong> × <strong>167 variáveis</strong></td></tr>
+        <tr><td><strong>Ondas</strong></td><td>coluna <code>Ano</code>: 2024 (8.195) · 2022 (7.865) · 2020 (7.272)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="reveal">Microdados individuais (cada linha = uma pessoa entrevistada), geolocalizados (<code>Latitude</code>/<code>Longitude</code>) e com chaves territoriais ricas: <code>Subprefeitura</code>, <code>Região Administrativa</code>, <code>Nome do Bairro</code>, <code>Código da RP/RA</code>, <code>Área de Planejamento</code>. As 167 variáveis cobrem blocos temáticos: perfil (<code>Faixa etária</code>, <code>Sexo</code>, <code>Gênero</code>, <code>Cor_raça</code>), deficiências, documentação (CPF, RG, etc.), <code>Naturalidade</code>, <code>Motivo_dormir_rua</code>, <code>Tempo_rua_RJ</code>, ajuda na pandemia, etc.</p>
+
+  <div class="callout callout--warn reveal"><span class="ic">⚠️</span><p><strong>Achados:</strong> dado <strong>sensível (LGPD)</strong> — microdado individual, ainda que com <code>Chave_única</code> anonimizada. Para o CompStat, usar <strong>agregado por território/ano</strong> (concentração e evolução de PSR), nunca o indivíduo. É o fator urbano sob responsabilidade da <strong>SMAS</strong>.</p></div>
+</section>
+
+<!-- ===================== § 01.10 — CENTRAL 1746 ===================== -->
+<section class="section wrap">
+  <div class="section-head reveal"><span class="six">§ 01.10</span><h2>Central 1746 (externo) 🟡</h2></div>
+  <p class="reveal"><span class="chip l-fator"><span class="swatch"></span>Fator urbano · externo</span></p>
+
+  <p class="reveal">Base pública de chamados de serviço público no <strong>BigQuery</strong>: <code>datario.adm_central_atendimento_1746.chamado</code> (DataLake da Prefeitura, desde 2010). Não está no repositório — é consulta externa. Cidadão registra poste apagado, poda, buraco, lixo etc. <strong>Utilidade:</strong> camada de <strong>validação</strong> dos fatores urbanos (ex.: trecho com muitos chamados de "poste apagado" reforça o fator "área mal iluminada"). Requer credencial GCP/BigQuery para consultar.</p>
+</section>
+
+<!-- ===================== § 01.11 — LACUNA ESTRUTURAL ===================== -->
+<section class="section wrap">
+  <div class="section-head reveal"><span class="six">§ 01.11</span><h2>Lacuna estrutural a resolver: a geometria dos trechos</h2></div>
+
+  <p class="reveal">O "bingo" é, no fundo, uma coincidência <strong>no mesmo segmento viário</strong>. Hoje temos pontos (crimes, denúncias, fatores, câmeras) e polígonos de área (FM, facções), mas <strong>não temos a base de geometria dos trechos viários</strong> — só o <code>id_trecho</code> referenciado nas câmeras. Duas saídas:</p>
+  <ol class="reveal" data-d="1">
+    <li><strong>Agregar por área FM</strong> (point-in-polygon nas 8 áreas) — viável já, granularidade de área.</li>
+    <li><strong>Obter/derivar a malha de trechos</strong> (logradouros do Rio) para granularidade fina de segmento — depende de fonte externa (ex.: logradouros do DataLake) ou de snapping por proximidade.</li>
+  </ol>
+</section>
+
+<!-- ===================== § 01.12 — TABELA CONSOLIDADA ===================== -->
+<section class="section wrap">
+  <div class="section-head reveal"><span class="six">§ 01.12</span><h2>Tabela consolidada de achados de qualidade</h2></div>
+
+  <div class="table-wrap reveal" data-d="1">
+    <table>
+      <thead>
+        <tr><th>Fonte</th><th>Achado</th><th>Impacto</th><th>Ação recomendada</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Ocorrências</td><td><code>data</code> com ano corrompido</td><td>médio</td><td>usar <code>ano</code>/<code>mes</code>/<code>hora</code>/<code>dia_semana</code></td></tr>
+        <tr><td>Ocorrências</td><td>só roubo (sem furto)</td><td>escopo</td><td>comunicar ao cliente; não prometer furto</td></tr>
+        <tr><td>Ocorrências</td><td>dicionário diz "2023-2024" vs dados 2020-2024</td><td>baixo</td><td>confiar nos dados</td></tr>
+        <tr><td>Ocorrências</td><td>36 coords corrompidas</td><td>baixo</td><td>filtrar bbox Rio</td></tr>
+        <tr><td>Disque Denúncia</td><td>latin-1 + <code>;</code> + vírgula decimal</td><td>alto se ignorado</td><td>parser específico</td></tr>
+        <tr><td>Disque Denúncia</td><td>relato/coords só ~21%</td><td>médio</td><td>usar como amostra qualitativa, não censo</td></tr>
+        <tr><td>Disque Denúncia</td><td>PII em <code>envolvidos.*</code></td><td>LGPD</td><td>agregar; tratar como indício</td></tr>
+        <tr><td>Fatores urbanos</td><td><code>coordenada_x</code>=lat, <code>_y</code>=lon (dicionário invertido)</td><td><strong>alto</strong></td><td>confiar nos valores</td></tr>
+        <tr><td>Domínio territorial</td><td>latitude até +33; cobre além do Rio</td><td><strong>alto</strong></td><td>filtrar bbox; tratar como indício</td></tr>
+        <tr><td>Domínio territorial</td><td>origem colaborativa</td><td>confiabilidade</td><td>rotular como não-oficial</td></tr>
+        <tr><td>Polígonos FM</td><td>só 8 áreas (subconjunto)</td><td>escopo</td><td>MVP nessas 8</td></tr>
+        <tr><td>Câmeras / áreas</td><td>cadastros de área divergem entre fontes</td><td>médio</td><td>normalizar nomes</td></tr>
+        <tr><td>CPSR</td><td>microdado individual</td><td>LGPD</td><td>usar agregado</td></tr>
+        <tr><td>Trechos</td><td>falta geometria de segmento</td><td>estrutural</td><td>agregar por área ou obter malha</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="footer"><div class="wrap">
+  <p class="sig">COMPSTAT://RIO · Claude Impact Lab 2026 · <a class="inline" href="index.html">↑ Visão geral</a> · <a class="inline" href="02-utilidades-por-fonte.html">02 · Utilidades →</a></p>
+</div></footer>
+<div class="grain" aria-hidden="true"></div>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="assets/compstat.js"></script>
+</body>
+</html>

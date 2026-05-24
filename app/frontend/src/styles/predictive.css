@@ -1,0 +1,355 @@
+/*
+  Aba "Mapa Preditivo de Risco". Todas as classes têm prefixo `pred-` para não
+  colidir com o CSS global. Usa apenas os design tokens já definidos em tokens.css.
+*/
+
+/* ---------------------------------------------------------------- Página */
+.pred-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--surface-app);
+  color: var(--text-body);
+}
+
+/* ------------------------------------------------------------- Cabeçalho */
+.pred-header {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  height: var(--topbar-h);
+  padding: 0 var(--sp-5);
+  background: var(--surface-rail);
+  border-bottom: 1px solid var(--border);
+}
+.pred-header__title {
+  display: flex;
+  flex-direction: column;
+  line-height: var(--lh-tight);
+}
+.pred-header__title strong {
+  font-size: var(--fs-md);
+  font-weight: 600;
+  color: var(--text-strong);
+}
+.pred-header__sub {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+
+/* ---------------------------------------------------------------- Layout */
+.pred-layout {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(360px, 0.9fr);
+  gap: var(--sp-5);
+  padding: var(--sp-5);
+}
+
+/* ------------------------------------------------------- Coluna do mapa */
+.pred-map-col {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+}
+.pred-map {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+.pred-map__bar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--surface-sunken);
+  border-bottom: 1px solid var(--border);
+}
+.pred-map__label {
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+.pred-map__select {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-family: inherit;
+  font-size: var(--fs-sm);
+  color: var(--text-body);
+  background: var(--surface-panel);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: 0.35rem 0.5rem;
+}
+.pred-map__select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-ring);
+}
+.pred-iframe {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: var(--map-paper);
+}
+.pred-map__hint {
+  flex: none;
+  padding: var(--sp-2) var(--sp-4);
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  background: var(--surface-sunken);
+  border-top: 1px solid var(--border);
+}
+
+/* ----------------------------------------------------------- Barra lateral */
+.pred-sidebar {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+.pred-tabs {
+  flex: none;
+  display: flex;
+  gap: var(--sp-1);
+  padding: var(--sp-2) var(--sp-2) 0;
+  background: var(--surface-sunken);
+  border-bottom: 1px solid var(--border);
+}
+.pred-tab {
+  flex: 1 1 0;
+  padding: var(--sp-2) var(--sp-3);
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  transition: color 160ms var(--ease-out), background 160ms var(--ease-out),
+    border-color 160ms var(--ease-out);
+}
+.pred-tab:hover {
+  color: var(--text-body);
+  background: var(--surface-panel);
+}
+.pred-tab--active {
+  color: var(--primary);
+  background: var(--surface-panel);
+  border-bottom-color: var(--primary);
+  font-weight: 600;
+}
+.pred-sidebar__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  padding: var(--sp-4);
+}
+
+/* ---------------------------------------------------------------- Tabelas */
+.pred-table-wrap {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.pred-table-wrap--scroll {
+  max-height: 100%;
+  overflow: auto;
+}
+.pred-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+}
+.pred-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  text-align: left;
+  font-weight: 600;
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-muted);
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--surface-sunken);
+  border-bottom: 1px solid var(--border);
+}
+.pred-table td {
+  padding: var(--sp-2) var(--sp-3);
+  border-bottom: 1px solid var(--border);
+  color: var(--text-body);
+  vertical-align: top;
+}
+.pred-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.pred-table tbody tr:hover td {
+  background: var(--surface-sunken);
+}
+.pred-table__num {
+  text-align: right;
+  white-space: nowrap;
+}
+.pred-table__area {
+  color: var(--text-strong);
+  font-weight: 500;
+}
+
+/* Badge de risco P(crime) por decil */
+.pred-badge {
+  display: inline-block;
+  padding: 0.1rem 0.45rem;
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+}
+.pred-badge--high {
+  background: var(--sev-high-soft);
+  color: var(--sev-high-text);
+}
+.pred-badge--med {
+  background: var(--sev-med-soft);
+  color: var(--sev-med-text);
+}
+.pred-badge--low {
+  background: var(--sev-low-soft);
+  color: var(--sev-low-text);
+}
+
+/* Célula de driver: nome + contribuição */
+.pred-driver {
+  display: inline;
+  color: var(--text-body);
+}
+.pred-driver__pct {
+  margin-left: var(--sp-1);
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+}
+
+/* Odds ratios coloridos por direção */
+.pred-coef__feat {
+  color: var(--text-strong);
+  font-weight: 500;
+}
+.pred-or--up {
+  color: var(--sev-high-text);
+  font-weight: 600;
+}
+.pred-or--down {
+  color: var(--sev-low-text);
+  font-weight: 600;
+}
+.pred-or--flat {
+  color: var(--text-muted);
+}
+
+/* ------------------------------------------------- Cards de métricas */
+.pred-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+.pred-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sp-3);
+}
+.pred-card {
+  background: var(--surface-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--sp-3) var(--sp-4);
+}
+.pred-card__title {
+  display: block;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--primary);
+  margin-bottom: var(--sp-3);
+}
+.pred-card__grid {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-3) var(--sp-4);
+}
+.pred-metric {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+}
+.pred-metric dt {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+.pred-metric dd {
+  margin: 0;
+  font-size: var(--fs-md);
+  font-weight: 600;
+  color: var(--text-strong);
+}
+.pred-metric__sub {
+  font-size: var(--fs-xs);
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+/* ---------------------------------------------------- Rodapés / estados */
+.pred-foot {
+  font-size: var(--fs-xs);
+  line-height: var(--lh-body);
+  color: var(--text-muted);
+}
+.pred-foot--lead {
+  margin-bottom: var(--sp-3);
+}
+.pred-state {
+  padding: var(--sp-4);
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+.pred-state--error {
+  color: var(--low-text);
+}
+
+/* ------------------------------------------------------------ Responsivo */
+@media (max-width: 960px) {
+  .pred-page {
+    height: auto;
+    min-height: 100vh;
+  }
+  .pred-layout {
+    grid-template-columns: 1fr;
+  }
+  .pred-map {
+    min-height: 60vh;
+  }
+  .pred-sidebar {
+    min-height: 60vh;
+  }
+  .pred-card__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}

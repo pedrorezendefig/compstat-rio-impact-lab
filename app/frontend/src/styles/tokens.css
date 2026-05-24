@@ -1,0 +1,116 @@
+/*
+  CompStat Rio — design tokens.
+  Sóbrio, institucional, legível em sala de reunião sob luz clara.
+  Neutros levemente tingidos para o azul-petróleo institucional.
+*/
+:root {
+  /* ---- Superfícies (neutros tingidos, nunca preto/branco puro) ---- */
+  --surface-app: oklch(97.6% 0.003 240);      /* fundo geral ~ #F7F8FA */
+  --surface-panel: oklch(99.2% 0.002 240);    /* cartões/painéis ~ branco quente */
+  --surface-sunken: oklch(95.4% 0.005 240);   /* áreas recuadas, cabeçalhos de tabela */
+  --surface-rail: oklch(98.4% 0.003 240);     /* segundo neutro: barras laterais/topo */
+
+  /* ---- Texto ---- */
+  --text-strong: oklch(26% 0.02 245);         /* títulos ~ #1F2733 */
+  --text-body: oklch(34% 0.018 245);          /* corpo */
+  --text-muted: oklch(52% 0.015 245);         /* legendas, metadados */
+  --text-faint: oklch(64% 0.012 245);         /* placeholders, dicas */
+  --text-on-primary: oklch(98% 0.004 240);
+
+  /* ---- Primária institucional (azul-petróleo) ~ #16425B ---- */
+  --primary: oklch(38% 0.058 232);
+  --primary-hover: oklch(33% 0.06 232);
+  --primary-active: oklch(29% 0.062 232);
+  --primary-soft: oklch(94% 0.024 232);       /* fundo suave da primária */
+  --primary-ring: oklch(56% 0.09 232 / 0.45); /* anel de foco acessível */
+
+  /* ---- Semântica de confiança / estados (cor nunca é o único sinal) ---- */
+  --ok: oklch(48% 0.08 158);                  /* verde ~ #2E7D5B */
+  --ok-soft: oklch(93% 0.04 158);
+  --ok-text: oklch(38% 0.08 158);
+
+  --warn: oklch(58% 0.1 84);                  /* âmbar ~ #B8860B */
+  --warn-soft: oklch(95% 0.05 86);            /* fundo rascunho ~ #FFF4E0 */
+  --warn-border: oklch(78% 0.09 84);
+  --warn-text: oklch(46% 0.1 84);
+
+  --low: oklch(50% 0.05 22);                  /* cinza-vermelho ~ #8A5A5A */
+  --low-soft: oklch(93% 0.025 22);
+  --low-text: oklch(44% 0.06 22);
+
+  /* ---- Diff do copiloto ---- */
+  --add-soft: oklch(93% 0.05 158);
+  --add-text: oklch(38% 0.09 158);
+  --del-soft: oklch(93% 0.045 22);
+  --del-text: oklch(45% 0.09 22);
+
+  /* ---- Bordas / divisores ---- */
+  --border: oklch(89% 0.006 240);
+  --border-strong: oklch(82% 0.008 240);
+
+  /* ---- Escala de calor (sequencial, mapa + heatmap temporal) ---- */
+  --heat-0: oklch(96% 0.01 240);              /* sem intensidade */
+  --heat-1: oklch(90% 0.05 240);
+  --heat-2: oklch(83% 0.09 248);
+  --heat-3: oklch(74% 0.12 28);
+  --heat-4: oklch(64% 0.16 28);
+  --heat-5: oklch(54% 0.18 25);
+  --no-data: oklch(92% 0.004 240);            /* célula sem dado: distinta de zero */
+
+  /* ---- Severidade operacional (command center; sempre com ícone/rótulo) ---- */
+  --sev-high: oklch(56% 0.21 27);            /* vermelho vívido (alta) */
+  --sev-high-soft: oklch(95% 0.045 27);
+  --sev-high-text: oklch(47% 0.2 27);
+  --sev-high-ring: oklch(56% 0.21 27 / 0.32);
+  --sev-med: oklch(72% 0.15 72);             /* âmbar (média) */
+  --sev-med-soft: oklch(95% 0.05 80);
+  --sev-med-text: oklch(50% 0.12 72);
+  --sev-low: oklch(56% 0.12 156);            /* verde (baixa) */
+  --sev-low-soft: oklch(94% 0.05 156);
+  --sev-low-text: oklch(42% 0.1 156);
+
+  /* ---- Tipografia ---- */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', 'SFMono-Regular', Menlo, monospace;
+  /* escala fixa em rem, razão ~1.2 */
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.8125rem;
+  --fs-base: 0.9375rem;
+  --fs-md: 1.0625rem;
+  --fs-lg: 1.25rem;
+  --fs-xl: 1.5rem;
+  --lh-tight: 1.25;
+  --lh-body: 1.55;
+
+  /* ---- Espaçamento (ritmo, não uniforme) ---- */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.5rem;
+  --sp-6: 2rem;
+  --sp-7: 3rem;
+
+  /* ---- Raio / elevação (discreta) ---- */
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-lg: 14px;
+  --shadow-sm: 0 1px 2px oklch(40% 0.03 245 / 0.06);
+  --shadow: 0 2px 8px oklch(40% 0.03 245 / 0.08), 0 1px 2px oklch(40% 0.03 245 / 0.06);
+  --shadow-pop: 0 8px 28px oklch(35% 0.03 245 / 0.16);
+  /* elevação para cartões/painéis no tom operacional (profundidade sutil) */
+  --shadow-card: 0 1px 2px oklch(40% 0.03 245 / 0.05), 0 4px 16px oklch(40% 0.03 245 / 0.05);
+  --shadow-float: 0 12px 36px oklch(35% 0.04 245 / 0.18), 0 2px 6px oklch(35% 0.03 245 / 0.08);
+
+  /* fundo do mapa quando os tiles não carregam (papel quadriculado discreto) */
+  --map-paper: oklch(96.5% 0.004 240);
+  --map-grid: oklch(91% 0.006 240);
+
+  /* ---- Layout ---- */
+  --topbar-h: 60px;
+  --nav-w: 248px;
+  --copilot-w: 380px;
+  --content-max: 1120px;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1); /* ease-out-quint */
+}

@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dossiê de Extração · CompStat Rio — Auditoria grão a grão da IA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,500&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0d0f0c;
+    --ink-2:#13160f;
+    --panel:#181b13;
+    --panel-2:#1f2318;
+    --line:#33392a;
+    --line-soft:#262a1d;
+    --paper:#e9e4d4;
+    --paper-dim:#9a9784;
+    --paper-faint:#6c6a58;
+    --amber:#e0a82e;
+    --amber-deep:#b9831a;
+    --teal:#5fb89a;
+    --rust:#cf6b4a;
+    --violet:#9a86c4;
+    --mark:rgba(224,168,46,.26);
+    --mono:'IBM Plex Mono',ui-monospace,monospace;
+    --serif:'Spectral',Georgia,serif;
+    --display:'Fraunces',Georgia,serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--ink); color:var(--paper);
+    font-family:var(--serif); font-size:17px; line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+    background-image:
+      radial-gradient(circle at 12% -10%, rgba(224,168,46,.08), transparent 45%),
+      radial-gradient(circle at 90% 8%, rgba(95,184,154,.06), transparent 40%),
+      repeating-linear-gradient(0deg, transparent 0 38px, rgba(255,255,255,.012) 38px 39px),
+      repeating-linear-gradient(90deg, transparent 0 38px, rgba(255,255,255,.012) 38px 39px);
+  }
+  body::before{
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:9999; opacity:.045;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  ::selection{background:var(--amber);color:#1a1505}
+  a{color:var(--amber);text-decoration:none}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 28px}
+
+  header.masthead{position:relative;border-bottom:1px solid var(--line);overflow:hidden}
+  .mh-grid{max-width:1180px;margin:0 auto;padding:46px 28px 38px;position:relative;z-index:2}
+  .stamp{
+    display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:12px;
+    letter-spacing:.28em;text-transform:uppercase;color:var(--amber);
+    border:1px solid var(--amber-deep);padding:7px 14px;border-radius:2px;
+    box-shadow:inset 0 0 0 1px rgba(224,168,46,.12);
+  }
+  .stamp::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--amber);box-shadow:0 0 10px var(--amber)}
+  h1{
+    font-family:var(--display);font-weight:900;font-size:clamp(40px,7vw,82px);line-height:.96;
+    margin:26px 0 0;letter-spacing:-.02em;
+    font-variation-settings:"opsz" 144;
+  }
+  h1 em{font-style:italic;font-weight:500;color:var(--amber)}
+  .lede{font-size:clamp(18px,2.1vw,22px);color:var(--paper-dim);max-width:60ch;margin:20px 0 0;font-weight:300}
+  .lede b{color:var(--paper);font-weight:500}
+  .docline{font-family:var(--mono);font-size:12px;color:var(--paper-faint);letter-spacing:.12em;margin-top:24px;text-transform:uppercase}
+
+  .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--line-soft);border:1px solid var(--line);border-radius:4px;margin-top:34px;overflow:hidden}
+  .stat{background:var(--ink-2);padding:18px 16px}
+  .stat .n{font-family:var(--display);font-weight:900;font-size:34px;line-height:1;color:var(--paper);font-variation-settings:"opsz" 80}
+  .stat .n.amber{color:var(--amber)} .stat .n.violet{color:var(--violet)} .stat .n.teal{color:var(--teal)}
+  .stat .l{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--paper-faint);margin-top:8px}
+  @media(max-width:760px){.stats{grid-template-columns:repeat(2,1fr)}}
+
+  section{padding:64px 0;border-bottom:1px solid var(--line-soft)}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.26em;text-transform:uppercase;color:var(--amber);display:flex;align-items:center;gap:12px}
+  .kicker::before{content:"";width:30px;height:1px;background:var(--amber-deep)}
+  h2{font-family:var(--display);font-weight:600;font-size:clamp(28px,4vw,44px);letter-spacing:-.01em;margin:16px 0 10px;line-height:1.05}
+  .sub{color:var(--paper-dim);max-width:68ch;font-weight:300;font-size:18px}
+
+  .flow{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:40px}
+  @media(max-width:900px){.flow{grid-template-columns:1fr}}
+  .node{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:22px 20px;transition:.25s}
+  .node:hover{border-color:var(--amber-deep);transform:translateY(-3px)}
+  .node .step{font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:.2em}
+  .node h3{font-family:var(--display);font-weight:600;font-size:21px;margin:8px 0 6px}
+  .node p{font-size:15px;color:var(--paper-dim);font-weight:300;margin:0 0 12px}
+  .node .files{font-family:var(--mono);font-size:11.5px;color:var(--paper-faint);border-top:1px dashed var(--line);padding-top:10px;line-height:1.9;word-break:break-word}
+  .node .files b{color:var(--teal);font-weight:500}
+  .node .badge{position:absolute;top:-9px;right:14px;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;padding:3px 8px;border-radius:99px;text-transform:uppercase}
+  .badge.det{background:#1d2a22;color:var(--teal);border:1px solid #2e4538}
+  .badge.ia{background:#2b2410;color:var(--amber);border:1px solid #4a3c12}
+  .flow-note{margin-top:22px;font-size:15.5px;color:var(--paper-dim);font-weight:300;border-left:2px solid var(--amber-deep);padding:6px 0 6px 18px}
+  .flow-note b{color:var(--paper);font-weight:500}
+
+  .prompt-grid{display:grid;grid-template-columns:1.25fr .85fr;gap:22px;margin-top:22px;align-items:start}
+  @media(max-width:880px){.prompt-grid{grid-template-columns:1fr}}
+  .term{background:#0a0c08;border:1px solid var(--line);border-radius:6px;overflow:hidden;box-shadow:0 18px 50px -28px rgba(0,0,0,.9)}
+  .term-bar{display:flex;align-items:center;gap:8px;padding:11px 15px;background:#11140d;border-bottom:1px solid var(--line)}
+  .term-bar .dot{width:10px;height:10px;border-radius:50%}
+  .term-bar .dot:nth-child(1){background:#cf6b4a}.term-bar .dot:nth-child(2){background:var(--amber)}.term-bar .dot:nth-child(3){background:var(--teal)}
+  .term-bar .name{margin-left:8px;font-family:var(--mono);font-size:11.5px;color:var(--paper-faint);letter-spacing:.08em}
+  .term pre{margin:0;padding:20px;font-family:var(--mono);font-size:13px;line-height:1.72;color:#cfd2bd;white-space:pre-wrap;word-break:break-word}
+  .term .role{color:var(--amber);font-weight:600}
+  .term .rule{color:var(--teal)}
+  .term .warn{color:var(--rust)}
+  .term .dim{color:var(--paper-faint)}
+  .biz{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--amber);border-radius:5px;padding:20px 22px;position:sticky;top:20px}
+  .biz h4{font-family:var(--display);font-weight:600;font-size:18px;margin:0 0 4px;color:var(--amber)}
+  .biz .tag{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--paper-faint)}
+  .biz ul{margin:14px 0 0;padding:0;list-style:none}
+  .biz li{position:relative;padding:0 0 14px 22px;font-size:15px;color:var(--paper-dim);font-weight:300}
+  .biz li::before{content:"\25B9";position:absolute;left:0;color:var(--teal)}
+  .biz li b{color:var(--paper);font-weight:500}
+  .prompt-tabs{display:flex;gap:6px;margin-top:30px;flex-wrap:wrap}
+  .ptab{font-family:var(--mono);font-size:12px;letter-spacing:.08em;padding:9px 16px;border:1px solid var(--line);background:var(--ink-2);color:var(--paper-dim);border-radius:4px;cursor:pointer;transition:.2s}
+  .ptab.active{background:var(--amber);color:#1a1505;border-color:var(--amber);font-weight:600}
+  .ptab:hover:not(.active){border-color:var(--amber-deep);color:var(--paper)}
+  .pane{display:none}.pane.active{display:block;animation:fade .3s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .legend{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:36px}
+  @media(max-width:880px){.legend{grid-template-columns:1fr}}
+  .lcard{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:22px}
+  .lcard h4{font-family:var(--display);font-weight:600;font-size:19px;margin:0 0 14px}
+  .field-row{display:flex;gap:12px;padding:9px 0;border-top:1px solid var(--line-soft);font-size:14.5px}
+  .field-row:first-of-type{border-top:none}
+  .field-row code{font-family:var(--mono);font-size:12px;color:var(--amber);white-space:nowrap}
+  .field-row span{color:var(--paper-dim);font-weight:300}
+  .conf{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:12px;padding:5px 10px;border-radius:3px;margin:3px 6px 3px 0}
+  .conf .d{width:8px;height:8px;border-radius:50%}
+  .conf.alta{background:#1d2a22;color:var(--teal)} .conf.alta .d{background:var(--teal)}
+  .conf.media{background:#2b2410;color:var(--amber)} .conf.media .d{background:var(--amber)}
+  .conf.baixa{background:#2c1c14;color:var(--rust)} .conf.baixa .d{background:var(--rust)}
+
+  .toolbar{position:sticky;top:0;z-index:50;background:rgba(13,15,12,.92);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin-top:34px;display:flex;flex-wrap:wrap;gap:18px;align-items:center}
+  .fgroup{display:flex;flex-direction:column;gap:6px}
+  .fgroup label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--paper-faint)}
+  .fgroup select,.fgroup input{font-family:var(--mono);font-size:13px;background:var(--ink-2);color:var(--paper);border:1px solid var(--line);border-radius:4px;padding:8px 10px;min-width:140px}
+  .chips{display:flex;gap:7px;flex-wrap:wrap}
+  .chip{font-family:var(--mono);font-size:11.5px;padding:7px 12px;border:1px solid var(--line);background:var(--ink-2);color:var(--paper-dim);border-radius:99px;cursor:pointer;transition:.18s}
+  .chip.on{background:var(--amber);color:#1a1505;border-color:var(--amber);font-weight:600}
+  .chip.on.rust{background:var(--rust);border-color:var(--rust);color:#fff}
+  .countbar{display:flex;justify-content:space-between;align-items:center;margin:22px 2px 16px;font-family:var(--mono);font-size:12.5px;color:var(--paper-faint);letter-spacing:.06em;flex-wrap:wrap;gap:12px}
+  .countbar b{color:var(--amber)}
+  .btn{font-family:var(--mono);font-size:12px;letter-spacing:.08em;padding:9px 15px;border:1px solid var(--amber-deep);background:transparent;color:var(--amber);border-radius:4px;cursor:pointer;transition:.2s}
+  .btn:hover{background:var(--amber);color:#1a1505}
+
+  .cards{display:flex;flex-direction:column;gap:16px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:hidden;transition:.2s}
+  .card[data-v="ok"]{border-left:3px solid var(--teal)}
+  .card[data-v="flag"]{border-left:3px solid var(--rust)}
+  .card.absent{background:var(--ink-2);border-style:dashed}
+  .card-head{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line-soft);font-family:var(--mono);font-size:11.5px}
+  .tagm{padding:4px 9px;border-radius:3px;letter-spacing:.1em;text-transform:uppercase;font-size:10.5px}
+  .tagm.doc{background:#1a1d14;color:var(--paper-dim);border:1px solid var(--line)}
+  .tagm.area{background:#15211b;color:var(--teal)}
+  .tagm.campo{background:#2b2410;color:var(--amber);font-weight:600}
+  .tagm.sub{color:var(--paper-faint);background:transparent;border:1px dashed var(--line)}
+  .card-head .spacer{flex:1}
+  .cmp{display:grid;grid-template-columns:1fr 1fr;gap:0}
+  @media(max-width:760px){.cmp{grid-template-columns:1fr}}
+  .cmp .side{padding:18px 20px}
+  .cmp .side.src{border-right:1px solid var(--line-soft);background:rgba(0,0,0,.18)}
+  @media(max-width:760px){.cmp .side.src{border-right:none;border-bottom:1px solid var(--line-soft)}}
+  .side .slab{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+  .side.src .slab{color:var(--teal)} .side.val .slab{color:var(--amber)}
+  .side .slab::before{content:"";width:6px;height:6px;border-radius:50%}
+  .side.src .slab::before{background:var(--teal)} .side.val .slab::before{background:var(--amber)}
+  .side .q{font-family:var(--mono);font-size:14px;line-height:1.7;color:#c8cbb6}
+  .side.src .q{border-left:2px solid var(--teal);padding-left:14px}
+  .side.val .txt{font-family:var(--serif);font-size:17px;line-height:1.6;color:var(--paper);font-weight:400}
+  .absent-banner{padding:22px 20px;display:flex;align-items:center;gap:14px}
+  .absent-banner .ic{width:34px;height:34px;border-radius:50%;border:1px dashed var(--violet);display:flex;align-items:center;justify-content:center;color:var(--violet);font-family:var(--mono);font-size:18px;flex:none}
+  .absent-banner .t{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--violet)}
+  .absent-banner .d{font-size:15px;color:var(--paper-dim);font-weight:300;margin-top:2px}
+
+  .card-foot{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:12px 18px;border-top:1px solid var(--line-soft);background:rgba(0,0,0,.12)}
+  .expand{font-family:var(--mono);font-size:11.5px;color:var(--paper-dim);cursor:pointer;background:none;border:none;display:flex;align-items:center;gap:6px;padding:4px 0}
+  .expand:hover{color:var(--amber)}
+  .expand .car{transition:.2s;display:inline-block}
+  .expand[aria-expanded="true"] .car{transform:rotate(90deg)}
+  .verdict{display:flex;gap:6px;margin-left:auto}
+  .vbtn{font-family:var(--mono);font-size:11px;padding:6px 11px;border:1px solid var(--line);background:var(--ink-2);color:var(--paper-dim);border-radius:4px;cursor:pointer;transition:.16s}
+  .vbtn.ok.sel{background:var(--teal);color:#08120d;border-color:var(--teal);font-weight:600}
+  .vbtn.flag.sel{background:var(--rust);color:#fff;border-color:var(--rust);font-weight:600}
+  .vbtn:hover{border-color:var(--paper-dim)}
+  .source-full{display:none;padding:0 20px 20px;width:100%}
+  .source-full.open{display:block;animation:fade .25s}
+  .source-full .label{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--paper-faint);margin:14px 0 8px}
+  .source-full .doc{font-family:var(--serif);font-size:15px;line-height:1.85;color:var(--paper-dim);font-weight:300;background:rgba(0,0,0,.22);border:1px solid var(--line-soft);border-radius:5px;padding:18px 20px;max-height:340px;overflow:auto;white-space:pre-wrap}
+  .source-full mark{background:var(--mark);color:var(--amber);border-radius:2px;padding:1px 3px;box-shadow:0 0 0 1px rgba(224,168,46,.3)}
+  .note{width:100%;margin-top:10px}
+  .note textarea{width:100%;font-family:var(--mono);font-size:12.5px;background:var(--ink-2);color:var(--paper);border:1px solid var(--line);border-radius:5px;padding:10px;resize:vertical;min-height:42px}
+  .empty{padding:60px 20px;text-align:center;color:var(--paper-faint);font-family:var(--mono);font-size:13px}
+
+  footer{padding:60px 0 80px}
+  .filter-explain{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:28px 30px;margin-top:20px}
+  .filter-explain h3{font-family:var(--display);font-weight:600;font-size:24px;margin:0 0 8px}
+  .filter-explain p{color:var(--paper-dim);font-weight:300;font-size:16px}
+  .filter-explain code{font-family:var(--mono);font-size:13px;color:var(--teal);background:var(--ink-2);padding:2px 6px;border-radius:3px}
+  .foot-meta{margin-top:40px;font-family:var(--mono);font-size:11px;color:var(--paper-faint);letter-spacing:.08em;line-height:1.9;border-top:1px solid var(--line-soft);padding-top:20px}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="mh-grid">
+    <span class="stamp">Dossiê de Extração · Confidencial-Operacional</span>
+    <h1>Como a IA <em>lê</em><br>a inteligência territorial</h1>
+    <p class="lede">Cada afirmação deste sistema foi <b>extraída de um texto por um modelo de linguagem</b> e fica presa a uma <b>citação literal da fonte</b>. Esta é a mesa onde você inspeciona, <b>grão a grão</b>, o que foi interpretado — e julga se está correto.</p>
+    <div class="docline">Pipeline: relints/*.docx &rarr; silver.py &rarr; Claude (sonnet-4-6) &rarr; dinamica_extraida.csv</div>
+    <div class="stats" id="stats"></div>
+  </div>
+</header>
+
+<section id="cadeia">
+  <div class="wrap">
+    <div class="kicker">01 · A cadeia do dado</div>
+    <h2>De texto solto a dado comparável</h2>
+    <p class="sub">A matéria-prima é texto livre escrito por humanos — relatórios e denúncias. O sistema o transforma em algo padronizado, geolocalizado e rastreável. A IA entra só na etapa de <em>leitura</em>; o resto é determinístico.</p>
+
+    <div class="flow">
+      <div class="node">
+        <span class="badge det">determinístico</span>
+        <div class="step">FONTE CRUA</div>
+        <h3>Texto humano</h3>
+        <p>Documentos não estruturados, cada um com seu jeito de escrever. Nada comparável entre si ainda.</p>
+        <div class="files"><b>relints/*.docx</b> — relatórios de inteligência<br><b>disk_denuncia.csv</b> — denúncias do cidadão (texto livre)</div>
+      </div>
+      <div class="node">
+        <span class="badge det">determinístico</span>
+        <div class="step">LIMPEZA · CONEXÃO</div>
+        <h3>Camada silver</h3>
+        <p>Liga cada registro a uma <em>área da Força Municipal</em> pelo ponto no mapa (point-in-polygon) e mascara dados pessoais.</p>
+        <div class="files"><b>silver.py</b> · geo.py<br>point-in-polygon &rarr; <b>area_fm_id</b><br>PII &rarr; <b>[NOME]</b></div>
+      </div>
+      <div class="node">
+        <span class="badge ia">IA · LLM</span>
+        <div class="step">LEITURA</div>
+        <h3>Claude sob travas</h3>
+        <p>O modelo lê cada texto e responde sempre <em>as mesmas 6 perguntas</em>, exigindo citação literal e marcando o que falta.</p>
+        <div class="files"><b>llm/prompts.py</b> · extract.py<br>modelo <b>claude-sonnet-4-6</b><br>tool use + validação Pydantic</div>
+      </div>
+      <div class="node">
+        <span class="badge det">determinístico</span>
+        <div class="step">SAÍDA</div>
+        <h3>CSV rastreável</h3>
+        <p>Uma linha = uma afirmação, com sua prova. Agora as áreas podem ser comparadas lado a lado.</p>
+        <div class="files"><b>dinamica_extraida.csv</b><br>área ↔ campo ↔ valor ↔ <b>trecho_fonte</b></div>
+      </div>
+    </div>
+    <p class="flow-note"><b>Normalizar</b> = fazer toda área responder às mesmas 6 perguntas, na mesma linguagem, sem dado pessoal. <b>Conectar</b> = amarrar cada resposta a uma área no mapa e à frase exata que a sustenta. Só depois disso o dado vira comparável e auditável.</p>
+  </div>
+</section>
+
+<section id="instrucao">
+  <div class="wrap">
+    <div class="kicker">02 · A instrução literal</div>
+    <h2>O prompt que governa a leitura</h2>
+    <p class="sub">Este é o texto exato enviado ao modelo a cada documento. Ele não pede opinião: pede <em>estruturação</em>. À direita, o que cada instrução garante para o negócio.</p>
+
+    <div class="prompt-tabs">
+      <button class="ptab active" data-pane="sys">SYSTEM · papel + travas</button>
+      <button class="ptab" data-pane="few">EXEMPLO · few-shot</button>
+      <button class="ptab" data-pane="ur">USER · RELINT</button>
+      <button class="ptab" data-pane="ud">USER · Disque</button>
+    </div>
+
+    <div class="pane active" id="pane-sys">
+      <div class="prompt-grid">
+        <div class="term">
+          <div class="term-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="name">prompts.py · SYSTEM</span></div>
+<pre><span class="role">Você é um analista de inteligência territorial do CompStat Rio.</span> Sua ÚNICA tarefa é ESTRUTURAR o que está escrito no texto fornecido — nunca interpretar além dele.
+
+Extraia, quando o texto trouxer, estes campos sobre a dinâmica criminal da área:
+<span class="rule">- modalidade_criminal:</span> o tipo de crime predominante.
+<span class="rule">- modus_operandi:</span> forma de abordagem, uso de cobertura, perfil de vítima.
+<span class="rule">- rotas_fuga:</span> vias/direções de fuga e escoamento de bens.
+<span class="rule">- pontos_receptacao:</span> locais de repasse/receptação de produto.
+<span class="rule">- controle_territorial:</span> influência de organização criminosa (ORCRIM/facção).
+<span class="rule">- deslocamento_autor:</span> como o autor se desloca (a pé, motocicleta, bicicleta, veículo).
+
+<span class="warn">REGRAS DURAS (não negociáveis):</span>
+1. CITAÇÃO OBRIGATÓRIA: toda afirmação deve trazer `trecho_fonte` = um trecho LITERAL copiado do texto.
+2. NUNCA INVENTAR: se o texto não traz um campo, marque esse campo com `declarado_ausente=true`. É comum e CORRETO que pontos_receptacao e controle_territorial fiquem ausentes — não os preencha por suposição.
+3. DESPERSONALIZAR (LGPD): o campo `valor` JAMAIS pode conter nome, vulgo, idade, cor de pele ou características físicas de pessoas. Descreva o ambiente e o padrão, não o indivíduo.
+4. CONFIANÇA HONESTA: alta=afirmação explícita; media=inferência razoável; baixa=indício fraco.
+
+<span class="dim">Você é um auxílio analítico; a decisão final é humana.</span></pre>
+        </div>
+        <div class="biz">
+          <span class="tag">Leitura de negócio</span>
+          <h4>Por que isso importa</h4>
+          <ul>
+            <li><b>"ÚNICA tarefa é ESTRUTURAR":</b> trava a criatividade. O modelo organiza o que está escrito, não inventa análise — reduz alucinação na origem.</li>
+            <li><b>As 6 perguntas fixas:</b> são o molde da <b>normalização</b>. Toda área responde ao mesmo formulário, então a Rodoviária e Botafogo viram comparáveis.</li>
+            <li><b>Trava 1 (citação):</b> cada dado nasce com sua prova → <b>rastreabilidade</b> total até a frase original.</li>
+            <li><b>Trava 2 (nunca inventar):</b> ausência é resultado válido. "Não sei" é melhor que um chute que vira decisão operacional errada.</li>
+            <li><b>Trava 3 (LGPD):</b> despersonaliza na leitura — o dado já sai conforme a lei.</li>
+            <li><b>Trava 4 (confiança):</b> separa fato de inferência, para o humano priorizar o que revisar.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="pane" id="pane-few">
+      <div class="prompt-grid">
+        <div class="term">
+          <div class="term-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="name">prompts.py · FEWSHOT (exemplo resolvido)</span></div>
+<pre><span class="dim">[EXEMPLO] Texto (RELINT, sub-local 'RODOVIÁRIA NOVO RIO'):</span>
+"A área apresenta intenso fluxo de passageiros e registra furtos rápidos de aparelhos celulares em áreas de espera, com abordagens oportunistas a passageiros desatentos durante o desembarque. Há indivíduos atuando a pé, motocicletas e bicicletas, com saídas diretas para a Av. Francisco Bicalho. A atuação se concentra nos horários de pico (06h-09h e 17h-20h)."
+
+<span class="rule">[Resposta esperada:</span>
+ modalidade_criminal = roubo/furto de celular
+   (cit. 'furtos rápidos de aparelhos celulares');
+ modus_operandi = abordagem oportunista a passageiro desatento
+   (cit. 'abordagens oportunistas a passageiros desatentos');
+ rotas_fuga = Av. Francisco Bicalho
+   (cit. 'saídas diretas para a Av. Francisco Bicalho');
+ deslocamento_autor = a pé, moto, bicicleta
+   (cit. 'a pé, motocicletas e bicicletas');
+ <span class="warn">pontos_receptacao = declarado_ausente=true;</span>
+ <span class="warn">controle_territorial = declarado_ausente=true.]</span></pre>
+        </div>
+        <div class="biz">
+          <span class="tag">Leitura de negócio</span>
+          <h4>Ensinar pelo exemplo</h4>
+          <ul>
+            <li>O <b>few-shot</b> mostra um caso já resolvido antes da tarefa real — o modelo "calibra" o padrão de resposta.</li>
+            <li>Repare: dois campos saem como <b>declarado_ausente</b>. Isso ensina explicitamente que <b>deixar em branco é o certo</b> quando o texto não fala.</li>
+            <li>Cada resposta vem colada à sua <b>citação</b> — o exemplo reforça a Trava 1 na prática, não só na regra.</li>
+            <li>Resultado: menos variação entre documentos e comportamento previsível diante de texto pobre.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="pane" id="pane-ur">
+      <div class="prompt-grid">
+        <div class="term">
+          <div class="term-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="name">prompts.py · user_relint()</span></div>
+<pre><span class="dim">Área FM:</span> {nome_area}
+<span class="dim">Sub-local:</span> {sub_local}
+
+Texto a estruturar (RELINT):
+"""
+{texto}
+"""
+
+Estruture a dinâmica criminal deste sub-local seguindo as regras.</pre>
+        </div>
+        <div class="biz">
+          <span class="tag">Leitura de negócio</span>
+          <h4>Uma pergunta por sub-local</h4>
+          <ul>
+            <li>O relatório é fatiado por <b>sub-local</b> (ex.: "Estação Leopoldina") antes de ir ao modelo — a leitura fica granular, não diluída no documento inteiro.</li>
+            <li><b>Área FM</b> entra no cabeçalho → cada resposta já nasce <b>conectada</b> ao território certo.</li>
+            <li>O texto vai entre aspas triplas: o modelo sabe exatamente onde começa e termina a fonte de onde pode citar.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="pane" id="pane-ud">
+      <div class="prompt-grid">
+        <div class="term">
+          <div class="term-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="name">prompts.py · user_disque()</span></div>
+<pre><span class="dim">Área FM:</span> {nome_area}
+
+Conjunto de relatos do Disque Denúncia desta área
+(texto livre, PII já mascarada como [NOME]):
+"""
+- (denúncia 1) {relato...}
+- (denúncia 2) {relato...}
+  ...
+"""
+
+Estruture a dinâmica criminal AGREGADA destes relatos.
+Cada afirmação deve citar o trecho literal de um relato.
+Despersonalize: descreva o padrão, nunca a pessoa.</pre>
+        </div>
+        <div class="biz">
+          <span class="tag">Leitura de negócio</span>
+          <h4>Muitas denúncias, um padrão</h4>
+          <ul>
+            <li>Dezenas de denúncias soltas viram <b>uma leitura agregada</b> por área — o ruído individual vira sinal de padrão.</li>
+            <li>A PII chega <b>já mascarada</b> da camada silver; o prompt ainda reforça a despersonalização (cinto e suspensório).</li>
+            <li>Mesmas 6 perguntas do RELINT → as duas fontes ficam no <b>mesmo formato</b> e podem se cruzar.</li>
+            <li><span class="dim">Obs.: no CSV atual só há linhas RELINT; este prompt entra quando o lote Disque é processado.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="legenda">
+  <div class="wrap">
+    <div class="kicker">03 · O dicionário</div>
+    <h2>O que cada coluna significa</h2>
+    <div class="legend">
+      <div class="lcard">
+        <h4>As 6 perguntas (campo)</h4>
+        <div class="field-row"><code>modalidade_criminal</code><span>tipo de crime predominante</span></div>
+        <div class="field-row"><code>modus_operandi</code><span>como abordam a vítima</span></div>
+        <div class="field-row"><code>rotas_fuga</code><span>por onde fogem / escoam bens</span></div>
+        <div class="field-row"><code>pontos_receptacao</code><span>onde revendem o produto</span></div>
+        <div class="field-row"><code>controle_territorial</code><span>facção / ORCRIM dominando</span></div>
+        <div class="field-row"><code>deslocamento_autor</code><span>a pé, moto, bike, veículo</span></div>
+      </div>
+      <div class="lcard">
+        <h4>O par que você audita</h4>
+        <div class="field-row"><code>trecho_fonte</code><span>a frase <b>literal</b> do documento — a prova</span></div>
+        <div class="field-row"><code>valor</code><span>a leitura <b>normalizada e sem PII</b> que a IA escreveu</span></div>
+        <p class="sub" style="font-size:14.5px;margin-top:14px">Auditar = ler os dois lado a lado. O <code style="font-family:var(--mono);color:var(--teal)">valor</code> diz fielmente o que o <code style="font-family:var(--mono);color:var(--teal)">trecho_fonte</code> sustenta? Sem acrescentar nem distorcer?</p>
+      </div>
+      <div class="lcard">
+        <h4>Os 3 níveis de confiança</h4>
+        <span class="conf alta"><span class="d"></span>alta · afirmação explícita</span>
+        <span class="conf media"><span class="d"></span>media · inferência razoável</span>
+        <span class="conf baixa"><span class="d"></span>baixa · indício fraco</span>
+        <p class="sub" style="font-size:14.5px;margin-top:14px">Comece a auditoria pelas de <b>baixa</b> e <b>media</b> confiança, e pelas <b>ausências</b> — é onde mora o risco de erro de interpretação.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="mesa">
+  <div class="wrap">
+    <div class="kicker">04 · Mesa de inspeção</div>
+    <h2>Grão a grão</h2>
+    <p class="sub">Cada cartão é uma afirmação. À esquerda, a frase literal da fonte; à direita, o que a IA escreveu. Abra o documento completo para ver a citação destacada no contexto, e marque seu parecer — fica salvo neste navegador.</p>
+
+    <div class="toolbar">
+      <div class="fgroup">
+        <label>Documento</label>
+        <select id="f-doc"><option value="">todos</option></select>
+      </div>
+      <div class="fgroup">
+        <label>Campo</label>
+        <select id="f-campo"><option value="">todos</option></select>
+      </div>
+      <div class="fgroup">
+        <label>Busca livre (valor / citação)</label>
+        <input id="f-q" type="text" placeholder="ex: celular, moto, fuga…" style="min-width:220px">
+      </div>
+      <div class="fgroup">
+        <label>Recortes de risco</label>
+        <div class="chips">
+          <span class="chip" data-flt="ausente">só ausências</span>
+          <span class="chip rust" data-flt="naoalta">conf. &lt; alta</span>
+          <span class="chip" data-flt="flag">marcadas p/ revisar</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="countbar">
+      <div id="count">…</div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <span id="verdict-tally"></span>
+        <button class="btn" id="export">exportar parecer ⤓</button>
+        <button class="btn" id="clearv" style="border-color:var(--line);color:var(--paper-faint)">limpar pareceres</button>
+      </div>
+    </div>
+
+    <div class="cards" id="cards"></div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="kicker">05 · A rede de segurança</div>
+    <h2 style="font-size:clamp(24px,3vw,34px)">Por que a citação não pode mentir</h2>
+    <div class="filter-explain">
+      <h3>O filtro anti-alucinação</h3>
+      <p>Depois que o modelo responde, o código roda <code>filtrar_citacoes()</code>: ele normaliza o <code>trecho_fonte</code> e confere se aquela frase <b>realmente existe</b> dentro do texto-fonte. Se não existir, a afirmação é <b>descartada</b> e o campo cai para <code>declarado_ausente</code>. Ou seja: nenhuma linha do CSV sobrevive sem uma citação que de fato está no documento original. É isso que torna esta mesa confiável — você está sempre comparando contra uma prova verificada por máquina, e dando o parecer humano por cima.</p>
+    </div>
+    <div class="foot-meta">
+      FONTE DE DADOS: dados_normalizados/silver/dinamica_extraida.csv · GERADO POR: normalizacao/run_llm.py (modelo claude-sonnet-4-6)<br>
+      ESTA PÁGINA É UM VISUALIZADOR LOCAL · OS PARECERES FICAM APENAS NESTE NAVEGADOR (localStorage) · NENHUM DADO É ENVIADO PARA FORA
+    </div>
+  </div>
+</footer>
+
+<script src="dados.js"></script>
+<script>
+const D = window.AUDIT;
+const ROWS = D.rows.map((r,i)=>({...r, _id:i, _absent: String(r.declarado_ausente).toLowerCase()==="true"}));
+const CAMPO_LABEL = {
+  modalidade_criminal:"modalidade criminal", modus_operandi:"modus operandi",
+  rotas_fuga:"rotas de fuga", pontos_receptacao:"pontos de receptação",
+  controle_territorial:"controle territorial", deslocamento_autor:"deslocamento do autor"
+};
+
+const R = D.resumo;
+const statsEl = document.getElementById('stats');
+[
+  ["total_linhas", R.total_linhas, "afirmações", ""],
+  ["preenchidos", R.preenchidos, "preenchidas (c/ citação)", "teal"],
+  ["ausentes", R.ausentes, "declaradas ausentes", "violet"],
+  ["subareas", R.n_subareas, "sub-locais lidos", "amber"],
+  ["docs", R.docs.length+" / "+R.areas.length, "docs / áreas FM", ""],
+].forEach(([k,n,l,c])=>{
+  const d=document.createElement('div'); d.className='stat';
+  const nn=document.createElement('div'); nn.className='n '+c; nn.textContent=n;
+  const ll=document.createElement('div'); ll.className='l'; ll.textContent=l;
+  d.appendChild(nn); d.appendChild(ll); statsEl.appendChild(d);
+});
+
+document.querySelectorAll('.ptab').forEach(t=>t.addEventListener('click',()=>{
+  document.querySelectorAll('.ptab').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.pane').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active'); document.getElementById('pane-'+t.dataset.pane).classList.add('active');
+}));
+
+const ACC = {'á':'a','à':'a','â':'a','ã':'a','ä':'a','é':'e','è':'e','ê':'e','ë':'e','í':'i','ì':'i','î':'i','ï':'i',
+  'ó':'o','ò':'o','ô':'o','õ':'o','ö':'o','ú':'u','ù':'u','û':'u','ü':'u','ç':'c','ñ':'n'};
+function fold(s){ s=(s||"").toLowerCase(); let o=""; for(const ch of s) o+= ACC[ch]||ch; return o; }
+function escapeHtml(s){return (s||"").replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+function highlightInto(node, full, quote){
+  if(!quote){ node.textContent=full; return; }
+  const ff=fold(full), fq=fold(quote.trim());
+  let idx=ff.indexOf(fq), len=fq.length;
+  if(idx<0){
+    const toks=fq.split(/\s+/).slice(0,8).join(" ");
+    idx=ff.indexOf(toks); len=toks.length;
+    if(idx<0){ node.textContent=full; return; }
+  }
+  node.appendChild(document.createTextNode(full.slice(0,idx)));
+  const m=document.createElement('mark'); m.textContent=full.slice(idx,idx+len); node.appendChild(m);
+  node.appendChild(document.createTextNode(full.slice(idx+len)));
+}
+
+function sourceText(r){
+  const f = D.fontes[r.doc_id]; if(!f) return null;
+  if(f.tipo==="RELINT"){
+    const b = f.blocos.find(b=> (b.sub_local||null)===(r.sub_local||null)) || f.blocos.find(b=>!b.sub_local);
+    return b ? b.texto : null;
+  }
+  if(f.relatos) return f.relatos.map((x,i)=>"(denúncia "+(i+1)+") "+x).join("\n\n");
+  return null;
+}
+
+const VKEY="compstat_audit_verdicts_v1";
+let V = JSON.parse(localStorage.getItem(VKEY)||"{}");
+function saveV(){localStorage.setItem(VKEY,JSON.stringify(V));}
+function tally(){
+  const nok=Object.values(V).filter(x=>x.v==="ok").length, nfl=Object.values(V).filter(x=>x.v==="flag").length;
+  const e=document.getElementById('verdict-tally'); e.textContent="";
+  const a=document.createElement('span'); a.style.color="var(--teal)"; a.textContent="✓ "+nok+" ok";
+  const b=document.createElement('span'); b.style.color="var(--rust)"; b.textContent="⚑ "+nfl+" revisar";
+  e.appendChild(a); e.appendChild(document.createTextNode(" · ")); e.appendChild(b);
+}
+
+const fDoc=document.getElementById('f-doc'), fCampo=document.getElementById('f-campo'), fQ=document.getElementById('f-q');
+[...new Set(ROWS.map(r=>r.doc_id))].sort().forEach(d=>fDoc.add(new Option(d,d)));
+Object.keys(CAMPO_LABEL).forEach(c=>fCampo.add(new Option(CAMPO_LABEL[c],c)));
+const flt={ausente:false,naoalta:false,flag:false};
+document.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{
+  flt[c.dataset.flt]=!flt[c.dataset.flt]; c.classList.toggle('on'); render();
+}));
+[fDoc,fCampo].forEach(s=>s.addEventListener('change',render));
+fQ.addEventListener('input',render);
+
+const cardsEl=document.getElementById('cards'), countEl=document.getElementById('count');
+function render(){
+  const q=fold(fQ.value.trim());
+  let list = ROWS.filter(r=>{
+    if(fDoc.value && r.doc_id!==fDoc.value) return false;
+    if(fCampo.value && r.campo!==fCampo.value) return false;
+    if(flt.ausente && !r._absent) return false;
+    if(flt.naoalta && (r.confianca==="alta"|| r._absent)) return false;
+    if(flt.flag && (V[r._id]&&V[r._id].v)!=="flag") return false;
+    if(q){ const hay=fold((r.valor||"")+" "+(r.trecho_fonte||"")); if(!hay.includes(q)) return false; }
+    return true;
+  });
+  countEl.textContent=""; const ct=document.createElement('b'); ct.textContent=list.length;
+  countEl.appendChild(document.createTextNode("exibindo ")); countEl.appendChild(ct);
+  countEl.appendChild(document.createTextNode(" de "+ROWS.length+" afirmações"));
+  tally();
+  cardsEl.textContent="";
+  if(!list.length){ const e=document.createElement('div'); e.className='empty'; e.textContent='Nenhuma afirmação com esses filtros.'; cardsEl.appendChild(e); return; }
+  list.forEach(r=>cardsEl.appendChild(cardEl(r)));
+}
+
+function mk(tag,cls,txt){const e=document.createElement(tag); if(cls)e.className=cls; if(txt!=null)e.textContent=txt; return e;}
+
+function cardEl(r){
+  const v = V[r._id]||{};
+  const el=mk('div','card'+(r._absent?' absent':'')); if(v.v) el.dataset.v=v.v;
+
+  const head=mk('div','card-head');
+  head.appendChild(mk('span','tagm doc', r.doc_id));
+  head.appendChild(mk('span','tagm area','área '+r.area_fm_id));
+  if(r.sub_local) head.appendChild(mk('span','tagm sub', r.sub_local));
+  head.appendChild(mk('span','spacer'));
+  head.appendChild(mk('span','tagm campo', CAMPO_LABEL[r.campo]||r.campo));
+  if(r.confianca){ const c=mk('span','conf '+r.confianca); c.appendChild(mk('span','d')); c.appendChild(document.createTextNode(r.confianca)); head.appendChild(c); }
+  el.appendChild(head);
+
+  if(r._absent){
+    const ab=mk('div','absent-banner');
+    ab.appendChild(mk('div','ic','∅'));
+    const box=mk('div'); box.appendChild(mk('div','t','declarado ausente'));
+    const d=mk('div','d'); d.appendChild(document.createTextNode('O texto-fonte não trazia ')); const sb=mk('b',null,CAMPO_LABEL[r.campo]); d.appendChild(sb); d.appendChild(document.createTextNode('. A IA deixou em branco por regra — não chutou.'));
+    box.appendChild(d); ab.appendChild(box); el.appendChild(ab);
+  } else {
+    const cmp=mk('div','cmp');
+    const s1=mk('div','side src'); const l1=mk('div','slab','trecho literal da fonte'); const q1=mk('div','q','“'+r.trecho_fonte+'”'); s1.appendChild(l1); s1.appendChild(q1);
+    const s2=mk('div','side val'); const l2=mk('div','slab','valor estruturado pela IA'); const q2=mk('div','txt',r.valor); s2.appendChild(l2); s2.appendChild(q2);
+    cmp.appendChild(s1); cmp.appendChild(s2); el.appendChild(cmp);
+  }
+
+  const src=sourceText(r);
+  const foot=mk('div','card-foot');
+  if(src){
+    const exp=mk('button','expand'); exp.setAttribute('aria-expanded','false');
+    const car=mk('span','car','▸'); exp.appendChild(car); exp.appendChild(document.createTextNode(' ver documento-fonte completo'));
+    foot.appendChild(exp);
+  } else {
+    foot.appendChild(mk('span',null,'fonte não disponível')).style.cssText='font-family:var(--mono);font-size:11px;color:var(--paper-faint)';
+  }
+
+  const verd=mk('div','verdict');
+  const bok=mk('button','vbtn ok'+(v.v==='ok'?' sel':''),'✓ correto'); bok.dataset.v='ok';
+  const bfl=mk('button','vbtn flag'+(v.v==='flag'?' sel':''),'⚑ revisar'); bfl.dataset.v='flag';
+  verd.appendChild(bok); verd.appendChild(bfl); foot.appendChild(verd);
+
+  if(src){
+    const sf=mk('div','source-full');
+    const f=D.fontes[r.doc_id];
+    const lab=mk('div','label');
+    lab.appendChild(document.createTextNode((f&&f.tipo==='RELINT'?('RELINT · '+(r.sub_local||'abertura')):'relatos agregados')+' — citação destacada em '));
+    const amb=mk('span',null,'âmbar'); amb.style.color='var(--amber)'; lab.appendChild(amb);
+    const doc=mk('div','doc'); highlightInto(doc, src, r.trecho_fonte);
+    sf.appendChild(lab); sf.appendChild(doc); foot.appendChild(sf);
+    foot.querySelector('.expand').addEventListener('click',(e)=>{const o=sf.classList.toggle('open'); e.currentTarget.setAttribute('aria-expanded',o);});
+  }
+
+  const noteWrap=mk('div','note'); const ta=document.createElement('textarea'); ta.placeholder='nota do parecer (opcional)…'; ta.value=v.note||''; noteWrap.appendChild(ta); foot.appendChild(noteWrap);
+
+  el.appendChild(foot);
+
+  [bok,bfl].forEach(b=>b.addEventListener('click',()=>{
+    const cur=V[r._id]||{}; cur.v=(cur.v===b.dataset.v)?null:b.dataset.v; V[r._id]=cur; saveV();
+    el.dataset.v=cur.v||''; [bok,bfl].forEach(x=>x.classList.toggle('sel', x.dataset.v===cur.v));
+    tally();
+  }));
+  ta.addEventListener('input',()=>{const cur=V[r._id]||{}; cur.note=ta.value; V[r._id]=cur; saveV();});
+  return el;
+}
+
+document.getElementById('export').addEventListener('click',()=>{
+  const out=ROWS.filter(r=>V[r._id]&&(V[r._id].v||V[r._id].note)).map(r=>({
+    doc_id:r.doc_id, area_fm_id:r.area_fm_id, sub_local:r.sub_local, campo:r.campo,
+    valor:r.valor, trecho_fonte:r.trecho_fonte, confianca:r.confianca, declarado_ausente:r._absent,
+    parecer:V[r._id].v||null, nota:V[r._id].note||null
+  }));
+  const blob=new Blob([JSON.stringify(out,null,2)],{type:"application/json"});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download="parecer_auditoria_dinamica.json"; a.click();
+});
+document.getElementById('clearv').addEventListener('click',()=>{
+  if(confirm("Limpar todos os pareceres salvos neste navegador?")){V={};saveV();render();}
+});
+
+render();
+</script>
+</body>
+</html>

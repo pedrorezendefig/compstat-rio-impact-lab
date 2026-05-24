@@ -1,0 +1,130 @@
+area_fm_id,category,orgao_responsavel,qtd
+2,Área mal iluminada com circulação de pedestres,Rio Luz,10
+2,Ponto de retenção do tráfego,CET-Rio,9
+2,Vegetação encobrindo iluminação pública,COMLURB,5
+2,Vegetação obstruindo a visibilidade do passeio,COMLURB,5
+2,Mobiliário/estrutura servindo de esconderijo,SECONSERVA,4
+2,Motocicletas trafegando no passeio,GM-Rio,4
+2,Pessoas em situação de rua,SMAS,4
+2,Cena de uso de drogas,SMAS,1
+2,Comércio irregular obstruindo a visibilidade do passeio,SEOP,1
+2,Lixo/entulho obstruindo a visibilidade,COMLURB,1
+2,Mobiliário abandonado servindo de esconderijo,SECONSERVA,1
+2,Tapumes servindo de esconderijo,SECONSERVA,1
+2,Vãos ou cavidades usados como esconderijo,SECONSERVA,1
+9,Vegetação encobrindo iluminação pública,COMLURB,48
+9,Pessoas em situação de rua,SMAS,24
+9,Área mal iluminada com circulação de pedestres,Rio Luz,21
+9,Vegetação obstruindo a visibilidade do passeio,COMLURB,19
+9,Ponto de retenção do tráfego,CET-Rio,12
+9,Cena de uso de drogas,SMAS,6
+9,Estacionamento irregular forçando pedestres à pista,SEOP,6
+9,Mobiliário/estrutura servindo de esconderijo,SECONSERVA,5
+9,Calçada estreita forçando pedestres à pista,SECONSERVA,4
+9,Lixo/entulho obstruindo a visibilidade,COMLURB,4
+9,Motocicletas trafegando no passeio,GM-Rio,4
+9,Comércio irregular obstruindo a visibilidade do passeio,SEOP,3
+9,Área mal iluminada com parada de veículos,Rio Luz,3
+9,Lixo/entulho forçando pedestres à pista,COMLURB,2
+9,Mobiliário abandonado servindo de esconderijo,SECONSERVA,2
+9,Mobiliário urbano desviando pedestres para a pista,SECONSERVA,1
+9,Ponto de ônibus com histórico de vandalismo,SMTR,1
+9,Veículos de grande porte obstruindo a visibilidade,SEOP,1
+9,Vãos ou cavidades usados como esconderijo,SECONSERVA,1
+10,Pessoas em situação de rua,SMAS,53
+10,Área mal iluminada com circulação de pedestres,Rio Luz,32
+10,Vegetação encobrindo iluminação pública,COMLURB,18
+10,Vãos ou cavidades usados como esconderijo,SECONSERVA,7
+10,Ponto de retenção do tráfego,CET-Rio,6
+10,Vegetação obstruindo a visibilidade do passeio,COMLURB,5
+10,Mobiliário/estrutura servindo de esconderijo,SECONSERVA,4
+10,Cena de uso de drogas,SMAS,3
+10,Comércio irregular obstruindo a visibilidade do passeio,SEOP,3
+10,Estacionamento irregular forçando pedestres à pista,SEOP,3
+10,Veículos de grande porte obstruindo a visibilidade,SEOP,3
+10,Calçada estreita forçando pedestres à pista,SECONSERVA,2
+10,Mobiliário urbano desviando pedestres para a pista,SECONSERVA,2
+10,Lixo/entulho forçando pedestres à pista,COMLURB,1
+10,Mobiliário abandonado servindo de esconderijo,SECONSERVA,1
+10,Motocicletas trafegando no passeio,GM-Rio,1
+10,Ponto de ônibus com histórico de vandalismo,SMTR,1
+10,Tapumes servindo de esconderijo,SECONSERVA,1
+10,Área mal iluminada com parada de veículos,Rio Luz,1
+11,Ponto de retenção do tráfego,CET-Rio,15
+11,Ponto de ônibus com histórico de vandalismo,SMTR,12
+11,Comércio irregular obstruindo a visibilidade do passeio,SEOP,11
+11,Pessoas em situação de rua,SMAS,8
+11,Vegetação encobrindo iluminação pública,COMLURB,8
+11,Veículos de grande porte obstruindo a visibilidade,SEOP,8
+11,Motocicletas trafegando no passeio,GM-Rio,7
+11,Mobiliário urbano desviando pedestres para a pista,SECONSERVA,4
+11,Área mal iluminada com circulação de pedestres,Rio Luz,4
+11,Estacionamento irregular forçando pedestres à pista,SEOP,2
+11,Mobiliário abandonado servindo de esconderijo,SECONSERVA,2
+11,Área mal iluminada com parada de veículos,Rio Luz,2
+11,Calçada estreita forçando pedestres à pista,SECONSERVA,1
+11,Tapumes servindo de esconderijo,SECONSERVA,1
+11,Vegetação obstruindo a visibilidade do passeio,COMLURB,1
+11,Vãos ou cavidades usados como esconderijo,SECONSERVA,1
+12,Área mal iluminada com circulação de pedestres,Rio Luz,22
+12,Vegetação encobrindo iluminação pública,COMLURB,8
+12,Ponto de retenção do tráfego,CET-Rio,7
+12,Vegetação obstruindo a visibilidade do passeio,COMLURB,7
+12,Comércio irregular obstruindo a visibilidade do passeio,SEOP,4
+12,Estacionamento irregular forçando pedestres à pista,SEOP,4
+12,Pessoas em situação de rua,SMAS,3
+12,Área mal iluminada com parada de veículos,Rio Luz,3
+12,Calçada estreita forçando pedestres à pista,SECONSERVA,2
+12,Motocicletas trafegando no passeio,GM-Rio,2
+12,Vãos ou cavidades usados como esconderijo,SECONSERVA,2
+12,Lixo/entulho forçando pedestres à pista,COMLURB,1
+12,Mobiliário urbano desviando pedestres para a pista,SECONSERVA,1
+12,Mobiliário/estrutura servindo de esconderijo,SECONSERVA,1
+14,Área mal iluminada com circulação de pedestres,Rio Luz,37
+14,Pessoas em situação de rua,SMAS,24
+14,Vegetação encobrindo iluminação pública,COMLURB,21
+14,Ponto de retenção do tráfego,CET-Rio,13
+14,Área mal iluminada com parada de veículos,Rio Luz,9
+14,Vãos ou cavidades usados como esconderijo,SECONSERVA,8
+14,Comércio irregular obstruindo a visibilidade do passeio,SEOP,6
+14,Vegetação obstruindo a visibilidade do passeio,COMLURB,6
+14,Calçada estreita forçando pedestres à pista,SECONSERVA,4
+14,Estacionamento irregular forçando pedestres à pista,SEOP,3
+14,Motocicletas trafegando no passeio,GM-Rio,3
+14,Mobiliário abandonado servindo de esconderijo,SECONSERVA,2
+14,Mobiliário urbano desviando pedestres para a pista,SECONSERVA,1
+14,Tapumes servindo de esconderijo,SECONSERVA,1
+14,Veículos de grande porte obstruindo a visibilidade,SEOP,1
+19,Vegetação encobrindo iluminação pública,COMLURB,16
+19,Motocicletas trafegando no passeio,GM-Rio,7
+19,Calçada estreita forçando pedestres à pista,SECONSERVA,6
+19,Pessoas em situação de rua,SMAS,6
+19,Vegetação obstruindo a visibilidade do passeio,COMLURB,5
+19,Veículos de grande porte obstruindo a visibilidade,SEOP,4
+19,Área mal iluminada com circulação de pedestres,Rio Luz,4
+19,Lixo/entulho forçando pedestres à pista,COMLURB,3
+19,Ponto de ônibus com histórico de vandalismo,SMTR,3
+19,Vãos ou cavidades usados como esconderijo,SECONSERVA,3
+19,Comércio irregular obstruindo a visibilidade do passeio,SEOP,2
+19,Estacionamento irregular forçando pedestres à pista,SEOP,2
+19,Lixo/entulho obstruindo a visibilidade,COMLURB,1
+19,Mobiliário abandonado servindo de esconderijo,SECONSERVA,1
+19,Mobiliário urbano desviando pedestres para a pista,SECONSERVA,1
+19,Mobiliário/estrutura servindo de esconderijo,SECONSERVA,1
+19,Ponto de retenção do tráfego,CET-Rio,1
+19,Tapumes servindo de esconderijo,SECONSERVA,1
+19,Área mal iluminada com parada de veículos,Rio Luz,1
+20,Pessoas em situação de rua,SMAS,22
+20,Vegetação encobrindo iluminação pública,COMLURB,13
+20,Ponto de retenção do tráfego,CET-Rio,11
+20,Comércio irregular obstruindo a visibilidade do passeio,SEOP,7
+20,Calçada estreita forçando pedestres à pista,SECONSERVA,5
+20,Cena de uso de drogas,SMAS,5
+20,Mobiliário/estrutura servindo de esconderijo,SECONSERVA,4
+20,Motocicletas trafegando no passeio,GM-Rio,3
+20,Vegetação obstruindo a visibilidade do passeio,COMLURB,3
+20,Estacionamento irregular forçando pedestres à pista,SEOP,2
+20,Mobiliário urbano desviando pedestres para a pista,SECONSERVA,2
+20,Área mal iluminada com circulação de pedestres,Rio Luz,2
+20,Veículos de grande porte obstruindo a visibilidade,SEOP,1
+20,Vãos ou cavidades usados como esconderijo,SECONSERVA,1

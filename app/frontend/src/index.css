@@ -1,0 +1,277 @@
+@import './styles/tokens.css';
+@import './styles/components.css';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
+  line-height: var(--lh-body);
+  color: var(--text-body);
+  background: var(--surface-app);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  color: var(--text-strong);
+  line-height: var(--lh-tight);
+  font-weight: 600;
+}
+
+p {
+  margin: 0;
+}
+
+/* Números e tabelas alinham por coluna */
+table,
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+button {
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+a {
+  color: var(--primary);
+}
+
+/* ---------- Botões ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface-panel);
+  color: var(--text-body);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  line-height: 1.2;
+  transition: background 160ms var(--ease-out), border-color 160ms var(--ease-out),
+    color 160ms var(--ease-out), box-shadow 160ms var(--ease-out);
+}
+.btn:hover {
+  background: var(--surface-sunken);
+  border-color: var(--text-faint);
+}
+.btn:active {
+  background: var(--border);
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.btn--primary {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--text-on-primary);
+  box-shadow: 0 1px 2px oklch(30% 0.06 232 / 0.28);
+}
+.btn--primary:hover {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+  box-shadow: 0 2px 6px oklch(30% 0.06 232 / 0.32);
+}
+.btn--primary:active {
+  background: var(--primary-active);
+}
+.btn--ghost {
+  border-color: transparent;
+  background: transparent;
+  color: var(--text-muted);
+}
+.btn--ghost:hover {
+  background: var(--surface-sunken);
+  color: var(--text-body);
+}
+.btn--sm {
+  padding: 0.25rem 0.55rem;
+  font-size: var(--fs-xs);
+}
+.btn--ok {
+  background: var(--ok);
+  border-color: var(--ok);
+  color: var(--text-on-primary);
+}
+.btn--ok:hover {
+  filter: brightness(0.95);
+}
+
+.icon {
+  width: 1em;
+  height: 1em;
+  flex: none;
+  stroke-width: 1.8;
+}
+
+/* ---------- Chips / badges ---------- */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: 0.12rem 0.5rem;
+  border-radius: 999px;
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  line-height: 1.5;
+  border: 1px solid transparent;
+}
+
+/* ---------- Cartões / superfícies ---------- */
+.panel {
+  background: var(--surface-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.divider {
+  height: 1px;
+  background: var(--border);
+  border: 0;
+  margin: 0;
+}
+
+.muted {
+  color: var(--text-muted);
+}
+.meta {
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+}
+.mono {
+  font-family: var(--font-mono);
+  font-feature-settings: 'tnum' 1, 'zero' 1;
+}
+
+/* Tabelas de dados */
+.dtable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+}
+.dtable th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--surface-sunken);
+  border-bottom: 1px solid var(--border);
+}
+.dtable td {
+  padding: var(--sp-2) var(--sp-3);
+  border-bottom: 1px solid var(--border);
+  color: var(--text-body);
+  vertical-align: top;
+}
+.dtable tbody tr {
+  transition: background 140ms var(--ease-out);
+}
+.dtable tbody tr:nth-child(even) td {
+  background: color-mix(in oklch, var(--surface-sunken) 55%, transparent);
+}
+.dtable tbody tr:hover td {
+  background: var(--surface-sunken);
+}
+.dtable tr:last-child td {
+  border-bottom: 0;
+}
+.dtable .num {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Campos editáveis */
+.field-input,
+.field-textarea {
+  width: 100%;
+  font-family: inherit;
+  font-size: var(--fs-sm);
+  color: var(--text-body);
+  background: var(--surface-panel);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: 0.35rem 0.5rem;
+  transition: border-color 160ms var(--ease-out), box-shadow 160ms var(--ease-out);
+}
+.field-input:focus,
+.field-textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-ring);
+}
+.field-textarea {
+  resize: vertical;
+  line-height: 1.45;
+}
+.field-input::placeholder,
+.field-textarea::placeholder {
+  color: var(--text-faint);
+}
+
+/* Animações utilitárias (não animam layout) */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

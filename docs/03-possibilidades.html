@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CompStat Rio — Possibilidades</title>
+<meta name="description" content="Plataforma de inteligência territorial de segurança pública do Rio. Visão geral dos dados, do modelo das 3 camadas e do conceito do bingo.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700;800&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/compstat.css">
+</head>
+<body>
+<div class="progress" aria-hidden="true"></div>
+
+<nav class="nav">
+  <a class="brand" href="index.html">COMPSTAT<span class="dot">://</span><b>RIO</b></a>
+  <button class="nav-toggle" aria-expanded="false" aria-controls="tabs">MENU</button>
+  <div class="nav-tabs" id="tabs">
+    <a href="index.html"><span class="ix">00</span>Visão geral</a>
+    <a href="01-arquitetura-de-dados.html"><span class="ix">01</span>Dados</a>
+    <a href="02-utilidades-por-fonte.html"><span class="ix">02</span>Utilidades</a>
+    <a href="03-possibilidades.html" aria-current="page"><span class="ix">03</span>Possibilidades</a>
+    <a href="04-como-comecar.html"><span class="ix">04</span>Como começar</a>
+  </div>
+</nav>
+
+<!-- ===================== CABEÇALHO ===================== -->
+<header class="section wrap" style="padding-top:clamp(30px,5vw,60px)">
+  <span class="kicker reveal">§ 03 · Possibilidades</span>
+  <h1 class="reveal" data-d="1" style="font-size:clamp(2rem,5vw,3.4rem);margin:14px 0 18px">Visão Geral de Possibilidades</h1>
+  <p class="lede reveal" data-d="2">O espaço de soluções que os dados habilitam: o desafio principal, os 4 desafios extras e ideias novas — cada um com viabilidade e bloqueios.</p>
+  <div class="layer-key reveal" data-d="3">
+    <span class="badge badge--go">🟢 viável já</span>
+    <span class="badge badge--maybe">🟡 com tratamento/IA</span>
+    <span class="badge badge--ext">🟠 fonte externa/decisão</span>
+    <span class="badge badge--block">🔴 bloqueado hoje</span>
+  </div>
+</header>
+
+<!-- ===================== § 03.A — DESAFIO PRINCIPAL ===================== -->
+<section class="section wrap">
+  <div class="section-head reveal"><span class="six">§ 03.A</span><h2>Desafio principal — Relatório Analítico de Área automatizado</h2></div>
+
+  <p class="reveal"><strong>O que é:</strong> gerar, por área, um documento no formato do RELINT (ver <a class="inline" href="01-arquitetura-de-dados.html">molde do RELINT no doc 01</a>) com: resumo executivo (4 perguntas), mapa de calor, análise temporal, dinâmica criminal sintetizada, fatores urbanos e <strong>painel de coincidências + plano de ação</strong> (matriz de responsabilização pré-populada).</p>
+
+  <p class="reveal" data-d="1"><strong>Como os dados se encaixam:</strong></p>
+  <div class="diagram reveal" data-d="1"><div class="diagram-cap">Como os dados alimentam o relatório de área</div>
+<pre class="mermaid">
+flowchart TB
+    OC[Ocorrências] -->|heatmap + picos| R2[Mapa de calor + Análise temporal]
+    DD[Disque Denúncia] -->|LLM extrai modus operandi| R4[Dinâmica criminal]
+    RL[RELINTs] -->|LLM: padrão + tom| R4
+    DT[Domínio territorial] -->|contexto facção/fuga| R4
+    FU[Fatores urbanos] -->|fator + órgão| R5[Fatores urbanos]
+    CPSR[CPSR] --> R5
+    R2 &amp; R4 &amp; R5 --> BINGO[🎯 Painel de coincidências]
+    FUO[Matriz Fatores×Órgãos] --> PA[Plano de ação / responsabilização]
+    BINGO --> PA --> DOC[📄 Relatório de Área .docx]
+</pre></div>
+
+  <p class="reveal"><strong>Viabilidade:</strong> <span class="badge badge--go">🟢 alta para as 8 áreas</span> que têm polígono + RELINT + fatores. O temporal está completo (picos por hora/dia são extraíveis), o match fator→órgão é direto, e o RELINT serve de gabarito de formato.</p>
+
+  <h3 class="reveal" style="margin-top:24px;font-size:1.18rem">Bloqueios/decisões:</h3>
+  <ul class="reveal">
+    <li>Granularidade: começar <strong>por área</strong> (point-in-polygon) em vez de trecho, enquanto não há malha de segmentos.</li>
+    <li>"Bingo" sem geometria de trecho = coincidência <strong>dentro da área</strong> (mancha + fator + dinâmica na mesma área/buffer), não no mesmo segmento exato. Aceitável para o MVP.</li>
+    <li>Saída <code>.docx</code>: replicar a estrutura de 7 blocos do RELINT.</li>
+  </ul>
+</section>
+
+<!-- ===================== § 03.B — OS 4 DESAFIOS EXTRAS ===================== -->
+<section class="section wrap">
+  <div class="section-head reveal"><span class="six">§ 03.B</span><h2>Os 4 desafios extras (briefing)</h2></div>
+  <div class="grid cols-2">
+
+    <article class="card l-dinamica reveal">
+      <span class="tag">Desafio 1</span>
+      <h3>Inteligência de Redes Sociais <span class="badge badge--ext">🟠</span></h3>
+      <p>Monitorar menções públicas (FM, relatos de crime) identificando <em>onde</em> e <em>como</em>, gerando alertas estruturados.</p>
+      <p><strong>Dados:</strong> nenhuma fonte de redes sociais no repositório → depende de coleta externa (APIs/scraping) + LLM de classificação.</p>
+      <p><strong>Viabilidade:</strong> <span class="badge badge--ext">🟠</span> conceito claro, mas <strong>sem dado no acervo</strong>; é uma frente própria de ingestão.</p>
+    </article>
+
+    <article class="card l-mancha reveal" data-d="1">
+      <span class="tag">Desafio 2</span>
+      <h3>Migração do Crime no Território <span class="badge badge--maybe">🟡</span></h3>
+      <p>Detectar/antecipar o deslocamento da criminalidade para áreas adjacentes quando se opera com intensidade.</p>
+      <p><strong>Dados:</strong> Ocorrências (5 anos, com tempo) + Polígonos FM.</p>
+      <p><strong>Viabilidade:</strong> <span class="badge badge--maybe">🟡</span> há série temporal suficiente para análise de deslocamento espaço-temporal entre áreas/bairros. Exige modelagem (séries por célula/área ao longo do tempo). Sem dado de <em>operação</em> (quando/onde a FM atuou), a "migração pós-operação" fica aproximada.</p>
+    </article>
+
+    <article class="card l-fator reveal" data-d="2">
+      <span class="tag">Desafio 3</span>
+      <h3>Relatório de Decisão de Permanência (90 dias) <span class="badge badge--maybe">🟡</span></h3>
+      <p>Apoiar a decisão de permanecer/sair de uma área consolidando indicadores e tendências.</p>
+      <p><strong>Dados:</strong> Ocorrências (tendência por área/mês) + Fatores (status) + CPSR (evolução).</p>
+      <p><strong>Viabilidade:</strong> <span class="badge badge--maybe">🟡</span> a série 2020-2024 permite comparativos e tendências por área. Falta o marco temporal das operações para medir efeito; pode-se começar com tendência de ocorrências por área e evolução de fatores.</p>
+    </article>
+
+    <article class="card l-suporte reveal">
+      <span class="tag">Desafio 4</span>
+      <h3>Otimização de Cobertura de Câmeras <span class="badge badge--go">🟢</span></h3>
+      <p>Achar pontos cegos: locais com crime e sem câmera, para priorizar instalação.</p>
+      <p><strong>Dados:</strong> Ocorrências (985 câmeras com posição) × Câmeras × Polígonos FM.</p>
+      <p><strong>Viabilidade:</strong> <span class="badge badge--go">🟢</span> <strong>direto</strong> — sobrepor densidade de roubo com cobertura de câmera (buffer) e ranquear lacunas. É a possibilidade extra mais pronta com os dados atuais.</p>
+    </article>
+
+  </div>
+</section>
+
+<!-- ===================== § 03.C — IDEIAS NOVAS ===================== -->
+<section class="section wrap">
+  <div class="section-head reveal"><span class="six">§ 03.C</span><h2>Ideias novas habilitadas pelos dados</h2></div>
+  <p class="reveal">Surgiram da análise do acervo; ampliam o valor sem sair do espírito do projeto.</p>
+  <div class="table-wrap reveal" data-d="1">
+    <table>
+      <thead>
+        <tr>
+          <th>Ideia</th>
+          <th>Dados</th>
+          <th>Viabilidade</th>
+          <th>Por quê</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Matriz hora × dia de pico por área</strong></td>
+          <td>Ocorrências (<code>hora</code>,<code>dia_semana</code>)</td>
+          <td><span class="badge badge--go">🟢</span></td>
+          <td>Responde "quando patrulhar" com precisão; alimenta o módulo temporal e a escala da FM.</td>
+        </tr>
+        <tr>
+          <td><strong>Validação de fator pelo 1746</strong></td>
+          <td>Fatores × Central 1746</td>
+          <td><span class="badge badge--ext">🟠</span></td>
+          <td>Trecho com fator "poste apagado" + muitos chamados 1746 de iluminação = prioridade reforçada. Depende de acesso ao BigQuery.</td>
+        </tr>
+        <tr>
+          <td><strong>Câmera × crime (ponto cego)</strong></td>
+          <td>Ocorrências × Câmeras</td>
+          <td><span class="badge badge--go">🟢</span></td>
+          <td>= Desafio 4; também enriquece o relatório de área.</td>
+        </tr>
+        <tr>
+          <td><strong>Facção × rota de fuga</strong></td>
+          <td>Domínio territorial × RELINT × Ocorrências</td>
+          <td><span class="badge badge--maybe">🟡</span></td>
+          <td>Cruzar menção de rota de fuga (RELINT) com polígono de facção adjacente para hipótese de escoamento/receptação. Indício, não fato.</td>
+        </tr>
+        <tr>
+          <td><strong>PSR como fator territorial + tendência</strong></td>
+          <td>CPSR agregado × Fatores (SMAS)</td>
+          <td><span class="badge badge--maybe">🟡</span></td>
+          <td>Concentração e evolução de PSR por território como insumo da ação SMAS. Usar agregado (LGPD).</td>
+        </tr>
+        <tr>
+          <td><strong>Normalização por exposição/AISP</strong></td>
+          <td>Ocorrências + denominador populacional</td>
+          <td><span class="badge badge--maybe">🟡</span></td>
+          <td>Corrige o viés de realimentação (guardrail §13): score por taxa, não por contagem bruta. Depende de dado populacional por área.</td>
+        </tr>
+        <tr>
+          <td><strong>Extração estruturada de DD/RELINT (JSON)</strong></td>
+          <td>Disque Denúncia + RELINTs</td>
+          <td><span class="badge badge--maybe">🟡</span></td>
+          <td>Pipeline LLM que devolve {modalidade, modus operandi, rota de fuga, receptação, controle territorial} com fonte rastreável — Parte 1 do motor de IA.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ===================== § 03.D — MAPA DE VIABILIDADE ===================== -->
+<section class="section wrap">
+  <div class="section-head reveal"><span class="six">§ 03.D</span><h2>Mapa de viabilidade (resumo)</h2></div>
+  <div class="table-wrap reveal">
+    <table>
+      <thead>
+        <tr>
+          <th>Possibilidade</th>
+          <th>Viab.</th>
+          <th>Dado pronto?</th>
+          <th>Maior bloqueio</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Relatório de Área (8 áreas)</strong></td>
+          <td><span class="badge badge--go">🟢</span></td>
+          <td>sim</td>
+          <td>granularidade de trecho</td>
+        </tr>
+        <tr>
+          <td>Matriz temporal de pico</td>
+          <td><span class="badge badge--go">🟢</span></td>
+          <td>sim</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td>Cobertura de câmeras (Desafio 4)</td>
+          <td><span class="badge badge--go">🟢</span></td>
+          <td>sim</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td>Migração do crime (Desafio 2)</td>
+          <td><span class="badge badge--maybe">🟡</span></td>
+          <td>parcial</td>
+          <td>falta marco de operação</td>
+        </tr>
+        <tr>
+          <td>Decisão de permanência (Desafio 3)</td>
+          <td><span class="badge badge--maybe">🟡</span></td>
+          <td>parcial</td>
+          <td>falta marco de operação</td>
+        </tr>
+        <tr>
+          <td>Extração LLM de DD/RELINT</td>
+          <td><span class="badge badge--maybe">🟡</span></td>
+          <td>sim</td>
+          <td>engenharia de prompt/validação</td>
+        </tr>
+        <tr>
+          <td>Facção × fuga / PSR / 1746</td>
+          <td><span class="badge badge--maybe">🟡</span>-<span class="badge badge--ext">🟠</span></td>
+          <td>parcial</td>
+          <td>filtro espacial / fonte externa</td>
+        </tr>
+        <tr>
+          <td>Inteligência de redes sociais (Desafio 1)</td>
+          <td><span class="badge badge--ext">🟠</span></td>
+          <td>não</td>
+          <td>ingestão externa inexistente</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout callout--info reveal" data-d="1"><span class="ic">🧭</span><p><strong>Leitura para o brainstorming:</strong> o caminho de <strong>maior valor com menor risco</strong> combina o <strong>Relatório de Área nas 8 áreas</strong> (núcleo) com a <strong>matriz temporal</strong> e a <strong>cobertura de câmeras</strong> — tudo viável com o dado que já temos. Os itens 🟡/🟠 entram em ondas seguintes. Ver o sequenciamento em <a class="inline" href="04-como-comecar.html"><code>04-como-comecar.html</code></a>.</p></div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="footer"><div class="wrap">
+  <p class="sig">COMPSTAT://RIO · Claude Impact Lab 2026 · <a class="inline" href="index.html">↑ Visão geral</a> · <a class="inline" href="02-utilidades-por-fonte.html">← 02 · Utilidades</a> · <a class="inline" href="04-como-comecar.html">04 · Como começar →</a></p>
+</div></footer>
+<div class="grain" aria-hidden="true"></div>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="assets/compstat.js"></script>
+</body>
+</html>

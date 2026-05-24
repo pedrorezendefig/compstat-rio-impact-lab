@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CompStat Rio — Como Começar</title>
+<meta name="description" content="Síntese do brainstorming do CompStat Rio: o que construir primeiro, em que ordem (ondas), decisões em aberto, guardrails e checklist de primeiros passos.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700;800&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/compstat.css">
+</head>
+<body>
+<div class="progress" aria-hidden="true"></div>
+
+<nav class="nav">
+  <a class="brand" href="index.html">COMPSTAT<span class="dot">://</span><b>RIO</b></a>
+  <button class="nav-toggle" aria-expanded="false" aria-controls="tabs">MENU</button>
+  <div class="nav-tabs" id="tabs">
+    <a href="index.html"><span class="ix">00</span>Visão geral</a>
+    <a href="01-arquitetura-de-dados.html"><span class="ix">01</span>Dados</a>
+    <a href="02-utilidades-por-fonte.html"><span class="ix">02</span>Utilidades</a>
+    <a href="03-possibilidades.html"><span class="ix">03</span>Possibilidades</a>
+    <a href="04-como-comecar.html" aria-current="page"><span class="ix">04</span>Como começar</a>
+  </div>
+</nav>
+
+<!-- ===================== CABEÇALHO ===================== -->
+<header class="section wrap" style="padding-top:clamp(30px,5vw,60px)">
+  <span class="kicker reveal">§ 04 · Como começar</span>
+  <h1 class="reveal" data-d="1" style="font-size:clamp(2rem,5vw,3.4rem);margin:14px 0 18px">Como Começar</h1>
+  <p class="lede reveal" data-d="2">Síntese do brainstorming: o que construir primeiro, em que ordem, e o que decidir antes de codar.</p>
+  <p class="muted reveal" data-d="3" style="margin-top:14px">Voltar para a <a class="inline" href="index.html">visão geral</a> · base conceitual em <a class="inline" href="../../ideiainicial.md"><code>ideiainicial.md</code></a>.</p>
+</header>
+
+<!-- ===================== § 04.1 — O INSIGHT ===================== -->
+<section class="section wrap">
+  <div class="section-head reveal"><span class="six">§ 04.1</span><h2>O insight que define o ponto de partida</h2></div>
+  <p class="reveal">As <strong>8 áreas com polígono</strong> (shapefile FM) batem <strong>1:1 com os 8 RELINTs</strong>, e essas mesmas áreas têm fatores urbanos, ocorrências e (em parte) câmeras. Ou seja: existe uma <strong>fatia vertical completa</strong> de dados para 8 áreas reais. Isso transforma a pergunta "por onde começar?" numa resposta concreta:</p>
+  <div class="callout callout--info reveal" data-d="1"><span class="ic">🎯</span><p><strong>MVP = gerar automaticamente o Relatório Analítico de 1 área, ponta a ponta, e validar contra o RELINT humano correspondente.</strong></p></div>
+  <p class="reveal" data-d="2">O RELINT existente vira o <strong>critério de aceitação</strong>: se o relatório gerado para a Rodoviária se aproxima do <code>RI_010</code> em estrutura, fatores citados e ações recomendadas, o motor funciona.</p>
+</section>
+
+<!-- ===================== § 04.2 — DEFINIÇÃO DO MVP ===================== -->
+<section class="section wrap">
+  <div class="section-head reveal"><span class="six">§ 04.2</span><h2>Definição do MVP</h2></div>
+  <p class="reveal"><strong>Entrada:</strong> 1 área (ex.: Presidente Vargas ou Rodoviária — as de maior cobertura de câmeras e dados).</p>
+  <p class="reveal" data-d="1"><strong>Processo:</strong></p>
+  <ol class="reveal" data-d="1">
+    <li>Recortar ocorrências, fatores, denúncias, câmeras e facções <strong>dentro do polígono</strong> da área (point-in-polygon / buffer).</li>
+    <li>Calcular <strong>mancha</strong> (densidade de roubo) e <strong>picos temporais</strong> (hora × dia).</li>
+    <li>Sintetizar <strong>dinâmica criminal</strong> via LLM a partir das denúncias e do RELINT da área (com fonte rastreável).</li>
+    <li>Listar <strong>fatores urbanos</strong> com órgão responsável (match direto).</li>
+    <li>Marcar <strong>coincidências</strong> (mancha + fator + dinâmica na mesma área/buffer) → score com justificativa legível.</li>
+    <li>Pré-popular a <strong>matriz de responsabilização</strong> (fator → órgão → ação).</li>
+  </ol>
+  <p class="reveal" data-d="2"><strong>Saída:</strong> um relatório (<code>.docx</code> ou tela) nos 7 blocos do RELINT, <strong>com rótulo de "rascunho — requer validação humana"</strong>.</p>
+  <div class="callout callout--ok reveal" data-d="2"><span class="ic">✅</span><p><strong>Critério de pronto:</strong> o relatório de 1 área é coerente com o RELINT humano e cita a fonte de cada conclusão qualitativa.</p></div>
+</section>
+
+<!-- ===================== § 04.3 — SEQUENCIAMENTO ===================== -->
+<section class="section wrap">
+  <div class="section-head reveal"><span class="six">§ 04.3</span><h2>Sequenciamento sugerido</h2></div>
+  <p class="reveal">Aproveitando as 4 frentes do <a class="inline" href="../../ideiainicial.md"><code>ideiainicial.md</code> §12</a> e ajustando ao dado real:</p>
+  <div class="diagram reveal" data-d="1"><div class="diagram-cap">Ondas de execução</div>
+<pre class="mermaid">
+flowchart LR
+    O1["Onda 0 — Fundação"] --> O2["Onda 1 — MVP 1 área"] --> O3["Onda 2 — 8 áreas"] --> O4["Onda 3 — Extras"]
+</pre>
+  </div>
+  <div class="waves reveal" data-d="1">
+    <div class="wave">
+      <span class="n">Onda 0 — Fundação</span>
+      <h4>Ingestão limpa + modelo geoespacial</h4>
+      <p><strong>Frentes:</strong> A (ingestão/schema) + C (geo).</p>
+      <p><strong>Entregável:</strong> Dados das 8 áreas carregados, normalizados (encoding, coords, filtro de facção), recortados por polígono. Query de coincidência por área funcionando com dado real.</p>
+    </div>
+    <div class="wave">
+      <span class="n">Onda 1 — MVP</span>
+      <h4>Relatório de 1 área ponta a ponta</h4>
+      <p><strong>Frentes:</strong> B (LLM) + C + D (frontend).</p>
+      <p><strong>Entregável:</strong> 1 relatório gerado e comparado ao RELINT; mapa de calor + matriz temporal da área.</p>
+    </div>
+    <div class="wave">
+      <span class="n">Onda 2 — Escala</span>
+      <h4>Generalizar para as 8 áreas</h4>
+      <p><strong>Frentes:</strong> todas.</p>
+      <p><strong>Entregável:</strong> 8 relatórios; tela de refino humano; matriz de responsabilização.</p>
+    </div>
+    <div class="wave">
+      <span class="n">Onda 3 — Extras</span>
+      <h4>Possibilidades de maior valor</h4>
+      <p><strong>Frentes:</strong> conforme prioridade.</p>
+      <p><strong>Entregável:</strong> cobertura de câmeras (Desafio 4 🟢), migração do crime, validação 1746.</p>
+    </div>
+  </div>
+  <p class="reveal" data-d="2"><strong>Por que nesta ordem:</strong> a Onda 0 destrava todo o resto e expõe cedo os problemas de dado (coords invertidas, encoding, escopo de facção). O MVP de 1 área prova o conceito com baixo custo antes de escalar.</p>
+</section>
+
+<!-- ===================== § 04.4 — DECISÕES EM ABERTO ===================== -->
+<section class="section wrap">
+  <div class="section-head reveal"><span class="six">§ 04.4</span><h2>Decisões em aberto (resolver antes/no início)</h2></div>
+  <div class="table-wrap reveal" data-d="1">
+    <table>
+      <thead>
+        <tr><th>Decisão</th><th>Opções</th><th>Recomendação</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Stack</strong></td><td>A recomendada em <a class="inline" href="../../ideiainicial.md"><code>ideiainicial.md</code> §11</a> (React+Vite, MapLibre, Supabase/PostGIS, Claude API) vs outra</td><td>Confirmar com o time; a recomendada favorece "implantável rápido".</td></tr>
+        <tr><td><strong>Granularidade do "bingo"</strong></td><td>por área (já) vs por trecho (precisa malha)</td><td>Começar por <strong>área</strong>; buscar malha de trechos como evolução.</td></tr>
+        <tr><td><strong>Furto</strong></td><td>dado só tem roubo</td><td>Alinhar escopo com o cliente; não prometer furto.</td></tr>
+        <tr><td><strong>Escopo geográfico de facção</strong></td><td>base cobre além do Rio + lixo</td><td>Filtrar bbox do município já na ingestão.</td></tr>
+        <tr><td><strong>Fonte de denominador</strong> (normalização)</td><td>população por área?</td><td>Buscar para mitigar viés de realimentação.</td></tr>
+        <tr><td><strong>Acesso ao 1746 (BigQuery)</strong></td><td>credencial GCP</td><td>Decidir se entra no MVP ou depois.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ===================== § 04.5 — RISCOS DE DADO ===================== -->
+<section class="section wrap">
+  <div class="section-head reveal"><span class="six">§ 04.5</span><h2>Riscos de dado a vigiar</h2></div>
+  <p class="reveal">Do <a class="inline" href="01-arquitetura-de-dados.html#12-tabela-consolidada-de-achados-de-qualidade">doc 01</a>:</p>
+  <div class="callout callout--crit reveal" data-d="1"><span class="ic">🚨</span><p><strong>Coordenadas de fatores com nome invertido</strong> — confiar nos valores (x=lat, y=lon), não no dicionário.</p></div>
+  <div class="callout callout--warn reveal" data-d="1"><span class="ic">⚠️</span><p><strong>Disque Denúncia</strong> — latin-1 + <code>;</code>; relato/coords só em ~21%; PII.</p></div>
+  <div class="callout callout--crit reveal" data-d="1"><span class="ic">🚨</span><p><strong>Domínio territorial</strong> — geometrias corrompidas (lat +33) e escopo estadual; filtrar.</p></div>
+  <div class="callout callout--warn reveal" data-d="1"><span class="ic">⚠️</span><p><strong><code>data</code> de ocorrências</strong> com ano corrompido — usar <code>ano</code>/<code>mes</code>/<code>hora</code>/<code>dia_semana</code>.</p></div>
+  <div class="callout callout--warn reveal" data-d="1"><span class="ic">⚠️</span><p><strong>Cadastros de área divergentes</strong> entre fontes — normalizar nomes.</p></div>
+</section>
+
+<!-- ===================== § 04.6 — GUARDRAILS ===================== -->
+<section class="section wrap">
+  <div class="section-head reveal"><span class="six">§ 04.6</span><h2>Guardrails de IA responsável</h2></div>
+  <p class="reveal">Não negociáveis — <a class="inline" href="../../ideiainicial.md">§13</a>.</p>
+  <div class="grid cols-2" style="margin-top:18px">
+    <article class="card l-bingo reveal"><h3>Decisão final sempre humana</h3><p>O sistema entrega rascunho + score + justificativa.</p></article>
+    <article class="card l-bingo reveal" data-d="1"><h3>Foco no ambiente, não no indivíduo</h3><p>Fatores urbanos e patrulha, não vigilância de pessoas.</p></article>
+    <article class="card l-bingo reveal"><h3>Texto livre é indício, não fato</h3><p>Citar fonte (DD/RELINT) e sinalizar incerteza.</p></article>
+    <article class="card l-bingo reveal" data-d="1"><h3>Nunca inventar dado</h3><p>Camada ausente é declarada; score com dado insuficiente = baixa confiança.</p></article>
+    <article class="card l-bingo reveal"><h3>Evitar viés de realimentação</h3><p>Considerar normalização por exposição.</p></article>
+    <article class="card l-bingo reveal" data-d="1"><h3>LGPD</h3><p>Agregados territoriais; minimizar dado pessoal (DD, CPSR).</p></article>
+    <article class="card l-bingo reveal"><h3>Transparência</h3><p>Toda priorização tem justificativa legível.</p></article>
+  </div>
+</section>
+
+<!-- ===================== § 04.7 — CHECKLIST ===================== -->
+<section class="section wrap">
+  <div class="section-head reveal"><span class="six">§ 04.7</span><h2>Checklist de primeiros passos</h2></div>
+  <ul class="checklist reveal" data-d="1">
+    <li>Time alinha <strong>stack</strong> e <strong>área-piloto</strong> do MVP.</li>
+    <li>Onda 0: script de ingestão das 8 áreas com <strong>encoding/coords/filtros corrigidos</strong> (os achados de qualidade do <a class="inline" href="01-arquitetura-de-dados.html#12-tabela-consolidada-de-achados-de-qualidade">doc 01</a> já mapeiam o que tratar).</li>
+    <li>Carregar geometrias e rodar <strong>point-in-polygon</strong> das fontes pontuais nas 8 áreas.</li>
+    <li>Implementar <strong>query de coincidência por área</strong> (mancha + fator + dinâmica) com dado real.</li>
+    <li><strong>Pipeline LLM</strong> de extração de DD/RELINT em JSON estruturado (modalidade, modus operandi, rota de fuga, receptação, controle territorial) com fonte rastreável.</li>
+    <li><strong>Matriz temporal</strong> (hora × dia) e <strong>mapa de calor</strong> da área-piloto.</li>
+    <li>Geração do <strong>relatório de 1 área</strong> + comparação com o RELINT humano.</li>
+    <li><strong>Tela de refino humano</strong> e matriz de responsabilização.</li>
+    <li>(Opcional) atualizar a seção 15 do <code>ideiainicial.md</code> apontando para esta documentação.</li>
+  </ul>
+  <div class="callout callout--info reveal" data-d="2"><span class="ic">🎯</span><p><strong>Próximo passo natural:</strong> escolher a área-piloto e fechar a stack. A partir daí, a Onda 0 pode começar imediatamente — os dados estão mapeados, perfilados e com os riscos identificados.</p></div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="footer"><div class="wrap">
+  <p class="sig">COMPSTAT://RIO · Claude Impact Lab 2026 · <a class="inline" href="index.html">↑ Visão geral</a> · <a class="inline" href="03-possibilidades.html">← 03 · Possibilidades</a></p>
+</div></footer>
+<div class="grain" aria-hidden="true"></div>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="assets/compstat.js"></script>
+</body>
+</html>

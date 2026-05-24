@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CompStat Rio — Apresentação · Claude Impact Lab Rio 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  /* ============================================================
+     CompStat Rio — deck de apresentação (dark institucional)
+     Paleta derivada do produto real (azul-petróleo #16425B).
+     As 3 camadas são o fio condutor cromático.
+     ============================================================ */
+  :root {
+    --bg:        #07151d;
+    --bg-2:      #0a212d;
+    --bg-3:      #0e2b3a;
+    --panel:     rgba(255, 255, 255, 0.035);
+    --panel-2:   rgba(255, 255, 255, 0.06);
+    --border:    rgba(146, 187, 205, 0.16);
+    --border-2:  rgba(146, 187, 205, 0.28);
+
+    --ink:       #eef5f8;
+    --ink-2:     #b3c6d0;
+    --ink-3:     #7c929e;
+
+    --accent:    #46b8df;   /* petróleo iluminado para o dark */
+    --accent-2:  #2e7da0;
+    --accent-deep:#16425b;
+
+    /* as 3 camadas */
+    --mancha:    #ff5d5f;   /* 🔴 onde o crime acontece */
+    --fator:     #f4b13c;   /* 🟡 o que o facilita     */
+    --dinamica:  #56b1ea;   /* 🔵 o porquê             */
+    --bingo:     #ffe08a;   /* 🎯 a coincidência        */
+
+    --ok:        #57c79a;
+
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+    --content-max: 1180px;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { height: 100%; overflow: hidden; }
+
+  body {
+    font-family: var(--font-sans);
+    color: var(--ink);
+    background:
+      radial-gradient(1200px 800px at 78% -8%, rgba(70, 184, 223, 0.10), transparent 60%),
+      radial-gradient(1000px 700px at 8% 108%, rgba(22, 66, 91, 0.45), transparent 60%),
+      linear-gradient(160deg, var(--bg) 0%, var(--bg-2) 55%, var(--bg) 100%);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* malha sutil de fundo */
+  body::before {
+    content: "";
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(146, 187, 205, 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(146, 187, 205, 0.045) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(circle at 50% 40%, #000 30%, transparent 92%);
+    -webkit-mask-image: radial-gradient(circle at 50% 40%, #000 30%, transparent 92%);
+  }
+
+  /* ---------- estrutura do deck ---------- */
+  .deck { position: relative; height: 100vh; width: 100vw; z-index: 1; }
+
+  .slide {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: clamp(2.2rem, 5.5vw, 5.5rem) clamp(2.2rem, 7vw, 7rem);
+    opacity: 0; visibility: hidden;
+    transform: scale(0.992);
+    transition: opacity 0.5s var(--ease), transform 0.5s var(--ease), visibility 0.5s;
+  }
+  .slide.active { opacity: 1; visibility: visible; transform: none; }
+
+  .stage { width: 100%; max-width: var(--content-max); margin: 0 auto; }
+
+  /* animação em cascata dos elementos de cada slide */
+  .slide [data-anim] {
+    opacity: 0; transform: translateY(18px);
+    transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
+    transition-delay: calc(var(--i, 0) * 90ms + 120ms);
+  }
+  .slide.active [data-anim] { opacity: 1; transform: none; }
+
+  /* ---------- tipografia / componentes ---------- */
+  .eyebrow {
+    font-family: var(--font-mono); font-size: clamp(0.7rem, 0.95vw, 0.82rem);
+    letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent);
+    display: inline-flex; align-items: center; gap: 0.6rem; margin-bottom: 1.4rem;
+  }
+  .eyebrow::before {
+    content: ""; width: 26px; height: 1px; background: var(--accent); opacity: 0.7;
+  }
+
+  h1.title {
+    font-size: clamp(2.6rem, 6.6vw, 5.4rem); font-weight: 800; line-height: 1.02;
+    letter-spacing: -0.025em; color: var(--ink);
+  }
+  h2.head {
+    font-size: clamp(1.9rem, 3.9vw, 3.2rem); font-weight: 800; line-height: 1.08;
+    letter-spacing: -0.02em; margin-bottom: 0.5rem;
+  }
+  .lead {
+    font-size: clamp(1.05rem, 1.5vw, 1.35rem); color: var(--ink-2); line-height: 1.55;
+    max-width: 60ch; font-weight: 400;
+  }
+  .muted { color: var(--ink-3); }
+  .grad {
+    background: linear-gradient(100deg, var(--accent) 10%, #8fe0ff 90%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hl-mancha   { color: var(--mancha); }
+  .hl-fator    { color: var(--fator); }
+  .hl-dinamica { color: var(--dinamica); }
+  .hl-bingo    { color: var(--bingo); }
+
+  .chip {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.03em;
+    padding: 0.35rem 0.7rem; border-radius: 999px;
+    border: 1px solid var(--border-2); background: var(--panel); color: var(--ink-2);
+  }
+  .dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+  .dot.m { background: var(--mancha); box-shadow: 0 0 12px var(--mancha); }
+  .dot.f { background: var(--fator);  box-shadow: 0 0 12px var(--fator); }
+  .dot.d { background: var(--dinamica); box-shadow: 0 0 12px var(--dinamica); }
+  .dot.b { background: var(--bingo);  box-shadow: 0 0 14px var(--bingo); }
+
+  .card {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 16px; padding: 1.5rem 1.6rem; position: relative; overflow: hidden;
+  }
+  .card .tick { position: absolute; top: 0; left: 0; height: 3px; width: 46px; border-radius: 0 0 3px 0; }
+
+  .grid { display: grid; gap: 1.1rem; }
+  .g2 { grid-template-columns: repeat(2, 1fr); }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .g4 { grid-template-columns: repeat(4, 1fr); }
+
+  /* números/estatística */
+  .stat .n { font-family: var(--font-mono); font-weight: 600; font-size: clamp(1.9rem, 3vw, 2.7rem); color: var(--ink); letter-spacing: -0.02em; }
+  .stat .n small { font-size: 0.5em; color: var(--accent); font-weight: 500; }
+  .stat .l { color: var(--ink-3); font-size: 0.9rem; margin-top: 0.25rem; }
+
+  ul.clean { list-style: none; display: flex; flex-direction: column; gap: 0.9rem; }
+  ul.clean li { display: flex; gap: 0.8rem; align-items: flex-start; color: var(--ink-2); font-size: clamp(0.98rem,1.25vw,1.12rem); line-height: 1.45; }
+  ul.clean li .mk { color: var(--accent); flex: none; margin-top: 0.15em; font-family: var(--font-mono); font-size: 0.85em; }
+
+  .kv { font-family: var(--font-mono); color: var(--ink-3); font-size: 0.82rem; }
+
+  /* ---------- chrome / navegação ---------- */
+  .progress { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, var(--accent), #8fe0ff); z-index: 50; transition: width 0.45s var(--ease); box-shadow: 0 0 12px rgba(70,184,223,0.6); }
+
+  .hud { position: fixed; z-index: 40; font-family: var(--font-mono); color: var(--ink-3); font-size: 0.78rem; letter-spacing: 0.08em; }
+  .hud.brand { bottom: 1.6rem; left: clamp(1.4rem, 7vw, 7rem); display: flex; align-items: center; gap: 0.6rem; }
+  .hud.brand b { color: var(--ink-2); font-weight: 600; }
+  .hud.count { bottom: 1.6rem; right: clamp(1.4rem, 7vw, 7rem); }
+  .hud.count b { color: var(--accent); }
+
+  .nav { position: fixed; bottom: 1.25rem; left: 50%; transform: translateX(-50%); z-index: 45; display: flex; gap: 0.5rem; }
+  .nav button, .fsbtn {
+    width: 38px; height: 38px; border-radius: 10px; cursor: pointer;
+    background: var(--panel-2); border: 1px solid var(--border-2); color: var(--ink-2);
+    display: grid; place-items: center; transition: all 0.2s var(--ease); font-size: 1rem;
+  }
+  .nav button:hover, .fsbtn:hover { background: var(--accent); color: #04161f; border-color: var(--accent); transform: translateY(-2px); }
+  .fsbtn { position: fixed; top: 1.2rem; right: clamp(1.4rem, 7vw, 7rem); z-index: 45; width: 34px; height: 34px; }
+
+  .hint { font-family: var(--font-mono); font-size: 0.78rem; color: var(--ink-3); letter-spacing: 0.06em; }
+  kbd { font-family: var(--font-mono); background: var(--panel-2); border: 1px solid var(--border-2); border-radius: 5px; padding: 0.1rem 0.45rem; color: var(--ink-2); font-size: 0.85em; }
+
+  /* ---------- Venn do bingo ---------- */
+  .venn { width: 100%; max-width: 440px; height: auto; }
+  .venn circle { mix-blend-mode: screen; }
+
+  /* ---------- pipeline ---------- */
+  .pipe { display: flex; align-items: stretch; gap: 0; flex-wrap: wrap; }
+  .pstep { flex: 1 1 0; min-width: 150px; position: relative; padding: 1.3rem 1.2rem; background: var(--panel); border: 1px solid var(--border); border-radius: 14px; }
+  .pstep .pn { font-family: var(--font-mono); font-size: 0.74rem; color: var(--accent); letter-spacing: 0.12em; }
+  .pstep h4 { font-size: 1.02rem; margin: 0.5rem 0 0.4rem; font-weight: 700; }
+  .pstep p { font-size: 0.86rem; color: var(--ink-3); line-height: 1.4; }
+  .parrow { align-self: center; color: var(--accent); padding: 0 0.55rem; font-size: 1.3rem; opacity: 0.8; }
+
+  /* ---------- mockups ---------- */
+  .screen { background: linear-gradient(180deg, #0c2330, #0a1d27); border: 1px solid var(--border-2); border-radius: 12px; overflow: hidden; box-shadow: 0 18px 40px rgba(0,0,0,0.4); }
+  .screen .bar { display: flex; align-items: center; gap: 0.4rem; padding: 0.55rem 0.7rem; background: rgba(255,255,255,0.04); border-bottom: 1px solid var(--border); }
+  .screen .bar i { width: 9px; height: 9px; border-radius: 50%; background: var(--ink-3); opacity: 0.5; }
+  .screen .bar span { font-family: var(--font-mono); font-size: 0.68rem; color: var(--ink-3); margin-left: auto; }
+  .screen .body { padding: 0.85rem; height: 188px; position: relative; }
+  .screen .cap { font-size: 0.82rem; color: var(--ink-2); margin-top: 0.7rem; text-align: center; }
+  .screen .cap b { color: var(--ink); }
+
+  .map-mock { position: absolute; inset: 0.85rem; border-radius: 8px;
+    background-image: linear-gradient(rgba(146,187,205,0.10) 1px, transparent 1px), linear-gradient(90deg, rgba(146,187,205,0.10) 1px, transparent 1px);
+    background-size: 22px 22px; background-color: #0b1f2a; overflow: hidden; }
+  .heat { position: absolute; border-radius: 50%; filter: blur(7px); }
+
+  .row { display: flex; align-items: center; gap: 0.5rem; padding: 0.45rem 0.55rem; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 0.5rem; background: rgba(255,255,255,0.02); }
+  .score { font-family: var(--font-mono); font-weight: 600; color: var(--bingo); font-size: 0.9rem; }
+  .bar-mini { height: 6px; border-radius: 3px; flex: 1; background: rgba(255,255,255,0.08); overflow: hidden; }
+  .bar-mini i { display: block; height: 100%; background: linear-gradient(90deg, var(--fator), var(--mancha)); }
+
+  .bubble { font-size: 0.74rem; line-height: 1.35; padding: 0.5rem 0.65rem; border-radius: 9px; margin-bottom: 0.5rem; max-width: 86%; }
+  .bubble.u { background: var(--accent-deep); color: var(--ink); margin-left: auto; }
+  .bubble.a { background: rgba(255,255,255,0.05); color: var(--ink-2); border: 1px solid var(--border); }
+  .cite { font-family: var(--font-mono); font-size: 0.64rem; color: var(--dinamica); border-left: 2px solid var(--dinamica); padding-left: 0.4rem; margin-top: 0.3rem; }
+
+  /* ---------- roadmap ---------- */
+  .timeline { position: relative; margin-top: 0.6rem; }
+  .axis { position: absolute; top: 26px; left: 2%; right: 2%; height: 2px; background: linear-gradient(90deg, var(--ok), var(--accent) 30%, var(--border-2)); }
+  .stops { display: grid; grid-template-columns: 0.85fr 1fr 1fr 1fr; gap: 1.1rem; position: relative; }
+  .stop .node { width: 16px; height: 16px; border-radius: 50%; border: 3px solid var(--bg); margin: 18px auto 1rem; position: relative; z-index: 2; }
+  .stop .phase { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); text-align: center; margin-bottom: 0.7rem; }
+  .stop .card { padding: 1.15rem 1.2rem; height: 100%; }
+  .stop h4 { font-size: 1.02rem; font-weight: 700; margin-bottom: 0.55rem; display: flex; align-items: center; gap: 0.5rem; }
+  .stop p { font-size: 0.85rem; color: var(--ink-2); line-height: 1.42; }
+  .stop .gain { font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent); margin-top: 0.7rem; display: block; }
+
+  .badge-now { font-family: var(--font-mono); font-size: 0.62rem; padding: 0.12rem 0.45rem; border-radius: 4px; background: rgba(87,199,154,0.16); color: var(--ok); border: 1px solid rgba(87,199,154,0.4); }
+
+  .closing-stat { display: flex; gap: 2.6rem; flex-wrap: wrap; margin-top: 2rem; }
+
+  @media (max-width: 900px) {
+    .g3, .g4 { grid-template-columns: repeat(2, 1fr); }
+    .stops { grid-template-columns: 1fr 1fr; }
+    .axis { display: none; }
+    .split { flex-direction: column; }
+  }
+  @media (max-width: 600px) {
+    .g2, .g3, .g4 { grid-template-columns: 1fr; }
+    .stops { grid-template-columns: 1fr; }
+  }
+
+  .split { display: flex; gap: clamp(1.5rem, 4vw, 3.5rem); align-items: center; }
+  .split > .col { flex: 1; min-width: 0; }
+
+  /* ---------- modelo preditivo ---------- */
+  .formula-box {
+    background: linear-gradient(120deg, rgba(70,184,223,0.09), var(--panel));
+    border: 1px solid var(--border-2); border-radius: 18px;
+    padding: clamp(1.5rem, 3.2vw, 2.8rem) clamp(1.2rem, 3vw, 2.4rem); text-align: center;
+  }
+  .formula { font-family: var(--font-mono); color: var(--ink); line-height: 1.7;
+    font-size: clamp(1.05rem, 2.3vw, 2rem); letter-spacing: -0.01em; }
+  .formula .v  { color: var(--accent); }
+  .formula .b  { color: var(--bingo); }
+  .formula .op { color: var(--ink-3); }
+  .formula .row2 { font-size: 0.78em; color: var(--ink-2); margin-top: 0.7rem; display: block; }
+  .formula-note { font-family: var(--font-mono); font-size: 0.8rem; color: var(--ink-3); letter-spacing: 0.01em; }
+
+  .varfam { padding: 0.8rem 0.9rem; }
+  .varfam h5 { font-size: 0.9rem; font-weight: 700; color: var(--ink); display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.3rem; }
+  .varfam p { font-size: 0.76rem; color: var(--ink-3); line-height: 1.34; }
+
+  .coef-row { display: grid; grid-template-columns: 100px 1fr; gap: 1.1rem; align-items: center;
+    padding: 0.8rem 1.1rem; border: 1px solid var(--border); border-radius: 12px; background: var(--panel); }
+  .or-badge { font-family: var(--font-mono); font-weight: 600; font-size: 1.05rem;
+    padding: 0.45rem 0.3rem; border-radius: 9px; text-align: center; line-height: 1.1; }
+  .or-badge small { display: block; font-size: 0.56rem; font-weight: 500; opacity: 0.85; letter-spacing: 0.06em; margin-top: 0.15rem; }
+  .or-up   { color: var(--mancha); background: rgba(255,93,95,0.12);  border: 1px solid rgba(255,93,95,0.34); }
+  .or-down { color: var(--ok);     background: rgba(87,199,154,0.12); border: 1px solid rgba(87,199,154,0.34); }
+  .or-flat { color: var(--fator);  background: rgba(244,177,60,0.12); border: 1px solid rgba(244,177,60,0.34); }
+  .coef-row .pol { font-size: 0.92rem; color: var(--ink-2); line-height: 1.42; }
+  .coef-row .pol b { color: var(--ink); }
+
+  .heatbar { height: 10px; border-radius: 6px; background: linear-gradient(90deg, #234c5b, #2f7d6a 35%, var(--fator) 72%, var(--mancha)); }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<button class="fsbtn" id="fsbtn" title="Tela cheia (F)">⛶</button>
+
+<div class="deck" id="deck">
+
+  <!-- ============ 1 · CAPA ============ -->
+  <section class="slide" data-slide>
+    <div class="stage">
+      <div class="eyebrow" data-anim style="--i:0">CompStat Rio · Claude Impact Lab Rio 2026</div>
+      <h1 class="title" data-anim style="--i:1">O crime não é aleatório.<br /><span class="grad">Tem endereço, horário e causa.</span></h1>
+      <p class="lead" data-anim style="--i:2; margin-top:1.6rem">Uma plataforma de inteligência criminal municipal que cruza onde o crime acontece, o que o facilita e o porquê — e devolve, em minutos, o relatório que hoje leva horas para ser montado à mão.</p>
+      <div data-anim style="--i:3; margin-top:2.2rem; display:flex; gap:0.6rem; flex-wrap:wrap">
+        <span class="chip"><span class="dot m"></span>Mancha criminal</span>
+        <span class="chip"><span class="dot f"></span>Fator urbano</span>
+        <span class="chip"><span class="dot d"></span>Dinâmica criminal</span>
+        <span class="chip"><span class="dot b"></span>Bingo = prioridade</span>
+      </div>
+      <p class="hint" data-anim style="--i:4; margin-top:2.6rem">Navegue com <kbd>←</kbd> <kbd>→</kbd> &nbsp;ou <kbd>espaço</kbd> &nbsp;·&nbsp; <kbd>F</kbd> para tela cheia</p>
+    </div>
+  </section>
+
+  <!-- ============ 6 · A SOLUÇÃO ============ -->
+  <section class="slide" data-slide>
+    <div class="stage">
+      <div class="eyebrow" data-anim style="--i:0">A solução</div>
+      <h2 class="head" data-anim style="--i:1">Relatório de Área assistido por IA — <span class="grad">auditável e editável</span></h2>
+      <p class="lead" data-anim style="--i:2">A plataforma monta o relatório que vai à reunião de CompStat e responde, por área, às <b style="color:var(--ink)">quatro perguntas operacionais</b>:</p>
+      <div class="grid g4" data-anim style="--i:3; margin-top:2rem">
+        <div class="card"><div class="tick" style="background:var(--mancha)"></div><div class="kv" style="color:var(--accent)">01</div><h4 style="margin:0.4rem 0; font-size:1.1rem">Onde patrulhar?</h4><p class="muted" style="font-size:0.86rem">mapa de calor das ocorrências por trecho</p></div>
+        <div class="card"><div class="tick" style="background:var(--fator)"></div><div class="kv" style="color:var(--accent)">02</div><h4 style="margin:0.4rem 0; font-size:1.1rem">Quando patrulhar?</h4><p class="muted" style="font-size:0.86rem">matriz de pico por hora × dia da semana</p></div>
+        <div class="card"><div class="tick" style="background:var(--dinamica)"></div><div class="kv" style="color:var(--accent)">03</div><h4 style="margin:0.4rem 0; font-size:1.1rem">Como empregar a FM?</h4><p class="muted" style="font-size:0.86rem">moto, viatura ou a pé — pelo modus operandi</p></div>
+        <div class="card"><div class="tick" style="background:var(--ok)"></div><div class="kv" style="color:var(--accent)">04</div><h4 style="margin:0.4rem 0; font-size:1.1rem">Quem resolve o fator?</h4><p class="muted" style="font-size:0.86rem">match direto fator → órgão responsável</p></div>
+      </div>
+      <p class="lead muted" data-anim style="--i:4; margin-top:1.8rem; font-size:1rem">A IA <b style="color:var(--ink-2)">amplifica</b> o analista — síntese, cruzamento e recomendação. A interpretação e a decisão continuam humanas.</p>
+    </div>
+  </section>
+
+  <!-- ============ 7 · OS DADOS ============ -->
+  <section class="slide" data-slide>
+    <div class="stage">
+      <div class="eyebrow" data-anim style="--i:0">A matéria-prima</div>
+      <h2 class="head" data-anim style="--i:1">Nove fontes reais, integradas</h2>
+      <p class="lead" data-anim style="--i:2">Dados verificados do acervo do Impact Lab — não estimativas.</p>
+      <div class="grid g4" data-anim style="--i:3; margin-top:2rem">
+        <div class="card stat"><div class="tick" style="background:var(--mancha)"></div><div class="n">115<small>k</small></div><div class="l">ocorrências de roubo · 2020–2024</div></div>
+        <div class="card stat"><div class="tick" style="background:var(--dinamica)"></div><div class="n">18<small>k</small></div><div class="l">denúncias do Disque Denúncia</div></div>
+        <div class="card stat"><div class="tick" style="background:var(--fator)"></div><div class="n">2.085</div><div class="l">fatores urbanos mapeados em campo</div></div>
+        <div class="card stat"><div class="tick" style="background:var(--accent)"></div><div class="n">985</div><div class="l">câmeras georreferenciadas</div></div>
+        <div class="card stat"><div class="tick" style="background:var(--dinamica)"></div><div class="n">8</div><div class="l">RELINTs de inteligência (molde do relatório)</div></div>
+        <div class="card stat"><div class="tick" style="background:var(--dinamica)"></div><div class="n">1.628</div><div class="l">territórios de facção (contexto)</div></div>
+        <div class="card stat"><div class="tick" style="background:var(--fator)"></div><div class="n">23<small>k</small></div><div class="l">registros do Censo Pop. em Sit. de Rua</div></div>
+        <div class="card stat"><div class="tick" style="background:var(--ok)"></div><div class="n">8</div><div class="l">áreas com fatia completa = <b style="color:var(--ink)">MVP</b></div></div>
+      </div>
+      <p class="lead muted" data-anim style="--i:4; margin-top:1.6rem; font-size:0.98rem">As <b style="color:var(--ink-2)">8 áreas com polígono batem 1:1 com os 8 RELINTs</b> — a fatia vertical perfeita para provar o conceito ponta a ponta.</p>
+    </div>
+  </section>
+
+  <!-- ============ 8 · COMO FUNCIONA ============ -->
+  <section class="slide" data-slide>
+    <div class="stage">
+      <div class="eyebrow" data-anim style="--i:0">Sob o capô</div>
+      <h2 class="head" data-anim style="--i:1">Do dado bruto ao relatório, em um pipeline</h2>
+      <div class="pipe" data-anim style="--i:2; margin-top:2rem">
+        <div class="pstep"><div class="pn">01 · INGESTÃO</div><h4>Normalização</h4><p>bronze → silver → gold. Corrige encoding, coordenadas e filtra ruído geográfico.</p></div>
+        <div class="parrow">→</div>
+        <div class="pstep" style="border-color:rgba(255,224,138,0.35)"><div class="pn" style="color:var(--bingo)">02 · MATCH</div><h4>Motor geoespacial</h4><p>DuckDB spatial cruza as 3 camadas por área e calcula o score do "bingo".</p></div>
+        <div class="parrow">→</div>
+        <div class="pstep" style="border-color:rgba(70,184,223,0.35)"><div class="pn" style="color:var(--accent)">03 · SÍNTESE</div><h4>IA (Claude)</h4><p>Sintetiza a dinâmica criminal e o copiloto consulta as tabelas — sempre citando a fonte.</p></div>
+        <div class="parrow">→</div>
+        <div class="pstep" style="border-color:rgba(87,199,154,0.35)"><div class="pn" style="color:var(--ok)">04 · ENTREGA</div><h4>Relatório .docx</h4><p>No formato do RELINT, marcado como <b style="color:var(--ink)">rascunho</b> para validação humana.</p></div>
+      </div>
+      <div data-anim style="--i:3; margin-top:2rem; display:flex; gap:0.6rem; flex-wrap:wrap">
+        <span class="chip">FastAPI</span>
+        <span class="chip">DuckDB <span class="muted">spatial</span></span>
+        <span class="chip">Claude <span class="muted">sonnet-4-6</span></span>
+        <span class="chip">React + Vite + TypeScript</span>
+        <span class="chip">MapLibre</span>
+        <span class="chip">export DOCX</span>
+      </div>
+      <p class="lead muted" data-anim style="--i:4; margin-top:1.5rem; font-size:0.96rem">Inclui ainda um <b style="color:var(--ink-2)">mapa preditivo</b> (modelo logit) que estima os principais drivers de risco por área.</p>
+    </div>
+  </section>
+
+  <!-- ============ P1 · MODELO PREDITIVO (micropolígonos) ============ -->
+  <section class="slide" data-slide>
+    <div class="stage split">
+      <div class="col">
+        <div class="eyebrow" data-anim style="--i:0">Modelo preditivo</div>
+        <h2 class="head" data-anim style="--i:1">O risco previsto em <span class="grad">micropolígonos</span></h2>
+        <p class="lead" data-anim style="--i:2">Cada polígono da Força Municipal é fatiado em <b style="color:var(--ink)">hexágonos H3</b> — micropolígonos de poucos quarteirões. Para cada um, o modelo estima a <b style="color:var(--ink)">probabilidade de crime nas próximas 1 a 4 semanas</b>.</p>
+        <ul class="clean" data-anim style="--i:3; margin-top:1.3rem">
+          <li><span class="mk">▸</span><span>Combina <b class="hl-fator">características urbanas</b> e o <b class="hl-mancha">histórico da criminalidade</b> de cada hexágono.</span></li>
+          <li><span class="mk">▸</span><span>Devolve um <b style="color:var(--ink)">decil de risco</b> e os fatores que mais pesaram <em>ali</em>.</span></li>
+        </ul>
+        <div class="card stat" data-anim style="--i:4; margin-top:1.4rem; max-width:360px">
+          <div class="tick" style="background:var(--mancha)"></div>
+          <div class="n">91,5<small>%</small></div>
+          <div class="l">maior risco previsto — hexágono em SFX–Afonso Pena <span class="kv">(decil 10)</span></div>
+        </div>
+      </div>
+      <div class="col" data-anim style="--i:3; display:grid; place-items:center">
+        <svg viewBox="0 0 348 300" style="width:100%; max-width:470px" aria-label="Polígono da Força Municipal fatiado em hexágonos H3 coloridos por risco">
+          <defs><polygon id="hx" points="0,-30 25.98,-15 25.98,15 0,30 -25.98,15 -25.98,-15" stroke="#091d27" stroke-width="2.5"/></defs>
+          <path d="M44,150 C44,72 112,36 178,34 C262,31 314,86 306,156 C300,228 244,272 172,270 C96,268 44,226 44,150 Z" fill="rgba(70,184,223,0.05)" stroke="#46b8df" stroke-width="2" stroke-dasharray="6 7" opacity="0.85"/>
+          <use href="#hx" x="90" y="60" fill="#234c5b"/>
+          <use href="#hx" x="142" y="60" fill="#2f7d6a"/>
+          <use href="#hx" x="194" y="60" fill="#c98a3a"/>
+          <use href="#hx" x="246" y="60" fill="#234c5b"/>
+          <use href="#hx" x="64" y="105" fill="#234c5b"/>
+          <use href="#hx" x="116" y="105" fill="#c98a3a"/>
+          <use href="#hx" x="168" y="105" fill="#e06a47"/>
+          <use href="#hx" x="220" y="105" fill="#c98a3a"/>
+          <use href="#hx" x="272" y="105" fill="#2f7d6a"/>
+          <use href="#hx" x="90" y="150" fill="#2f7d6a"/>
+          <use href="#hx" x="142" y="150" fill="#e06a47"/>
+          <use href="#hx" x="194" y="150" fill="#ff5d5f"/>
+          <use href="#hx" x="246" y="150" fill="#c98a3a"/>
+          <use href="#hx" x="64" y="195" fill="#234c5b"/>
+          <use href="#hx" x="116" y="195" fill="#c98a3a"/>
+          <use href="#hx" x="168" y="195" fill="#e06a47"/>
+          <use href="#hx" x="220" y="195" fill="#2f7d6a"/>
+          <use href="#hx" x="272" y="195" fill="#234c5b"/>
+          <use href="#hx" x="90" y="240" fill="#234c5b"/>
+          <use href="#hx" x="142" y="240" fill="#2f7d6a"/>
+          <use href="#hx" x="194" y="240" fill="#c98a3a"/>
+          <use href="#hx" x="246" y="240" fill="#234c5b"/>
+          <text x="194" y="155" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13.5" font-weight="600" fill="#fff">91%</text>
+          <text x="174" y="16" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="#46b8df" letter-spacing="1.2">POLÍGONO DA FORÇA MUNICIPAL</text>
+          <text x="174" y="293" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="#7c929e">micropolígonos H3</text>
+        </svg>
+        <div style="width:100%; max-width:470px; margin-top:0.85rem">
+          <div class="heatbar"></div>
+          <div style="display:flex; justify-content:space-between; font-family:var(--font-mono); font-size:0.72rem; color:var(--ink-3); margin-top:0.35rem"><span>menor risco</span><span>maior risco</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ P2 · PIPELINE DO LOGIT ============ -->
+  <section class="slide" data-slide>
+    <div class="stage">
+      <div class="eyebrow" data-anim style="--i:0">Como o modelo aprende</div>
+      <h2 class="head" data-anim style="--i:1">Do dado ao risco, dentro do logit</h2>
+      <div class="pipe" data-anim style="--i:2; margin-top:2rem">
+        <div class="pstep"><div class="pn">01 · UNIDADE</div><h4>Hexágono × semana</h4><p>Cada área FM vira micropolígonos H3; cada hexágono-semana é uma observação.</p></div>
+        <div class="parrow">→</div>
+        <div class="pstep" style="border-color:rgba(244,177,60,0.35)"><div class="pn" style="color:var(--fator)">02 · VARIÁVEIS</div><h4>8 famílias de sinais</h4><p>Memória do crime, contágio espacial, ambiente urbano, vigilância e domínio territorial.</p></div>
+        <div class="parrow">→</div>
+        <div class="pstep" style="border-color:rgba(255,224,138,0.4)"><div class="pn" style="color:var(--bingo)">03 · MODELO</div><h4>Regressão logística</h4><p>Treinada fora do tempo de teste; coeficientes por horizonte T+1 / T+2 / T+4.</p></div>
+        <div class="parrow">→</div>
+        <div class="pstep" style="border-color:rgba(255,93,95,0.35)"><div class="pn" style="color:var(--mancha)">04 · SAÍDA</div><h4>Risco + drivers</h4><p>P(crime) por hexágono, decil de risco e os 3 fatores que mais pesaram ali.</p></div>
+      </div>
+      <div data-anim style="--i:3; margin-top:1.8rem; display:flex; gap:0.6rem; flex-wrap:wrap; align-items:center">
+        <span class="chip">AUC-ROC <b style="color:var(--ink)">0,71–0,75</b></span>
+        <span class="chip">PAI@10 <b style="color:var(--ink)">≈ 3,5×</b></span>
+        <span class="chip">Moran's I <b style="color:var(--ink)">0,12–0,14</b> <span class="muted">p&lt;0,05</span></span>
+        <span class="chip">38.220 <span class="muted">obs. de treino</span></span>
+      </div>
+      <p class="lead muted" data-anim style="--i:4; margin-top:1.3rem; font-size:0.96rem">Validado fora do período de treino: o <b style="color:var(--ink-2)">top 10%</b> de hexágonos de maior risco concentra <b style="color:var(--ink-2)">3,5× mais crime</b> que a escolha ao acaso — exatamente o que importa para priorizar a patrulha.</p>
+    </div>
+  </section>
+
+  <!-- ============ P3 · FÓRMULA DO LOGIT ============ -->
+  <section class="slide" data-slide>
+    <div class="stage">
+      <div class="eyebrow" data-anim style="--i:0">A matemática, sem mistério</div>
+      <h2 class="head" data-anim style="--i:1">A fórmula do logit</h2>
+      <div class="formula-box" data-anim style="--i:2; margin-top:1.3rem">
+        <div class="formula">
+          <span class="op">ln</span> ( <span class="v">p̂</span> / (1 − <span class="v">p̂</span>) ) &nbsp;=&nbsp; <span class="b">β₀</span> <span class="op">+</span> <span class="b">β₁</span><span class="v">x₁</span> <span class="op">+</span> <span class="b">β₂</span><span class="v">x₂</span> <span class="op">+ ⋯ +</span> <span class="b">βₖ</span><span class="v">xₖ</span>
+          <span class="row2"><span class="v">p̂</span> = 1 / ( 1 + e<sup style="font-size:0.62em">−(<span class="b">β₀</span> + Σ <span class="b">βⱼ</span><span class="v">xⱼ</span>)</sup> ) &nbsp;·&nbsp; <span class="op">odds ratio</span> = e<sup style="font-size:0.62em"><span class="b">βⱼ</span></sup></span>
+        </div>
+        <p class="formula-note" style="margin-top:1.1rem"><span class="v">p̂</span> = probabilidade de crime no hexágono · <span class="b">βⱼ</span> = peso de cada variável · OR &gt; 1 aumenta o risco, &lt; 1 reduz</p>
+      </div>
+      <p class="kv" data-anim style="--i:3; margin-top:1.2rem; color:var(--ink-2)">Tipos de variáveis explicativas <span style="color:var(--accent)">x</span>:</p>
+      <div class="grid g4" data-anim style="--i:4; margin-top:0.7rem">
+        <div class="card varfam"><h5><span class="dot m"></span>Memória do crime</h5><p>houve crime há 1, 2, 4 e 12 semanas; acúmulo recente</p></div>
+        <div class="card varfam"><h5><span class="dot m"></span>Contágio espacial</h5><p>crime nos hexágonos vizinhos (defasagem espacial)</p></div>
+        <div class="card varfam"><h5><span class="dot d"></span>Sinais cidadãos</h5><p>denúncias do Disque Denúncia defasadas</p></div>
+        <div class="card varfam"><h5><span class="dot" style="background:var(--accent)"></span>Sazonalidade</h5><p>semana do ano (cíclica) e semana de feriado</p></div>
+        <div class="card varfam"><h5><span class="dot f"></span>Ambiente urbano</h5><p>calçada, iluminação, lixo, vegetação, trânsito, situação de rua</p></div>
+        <div class="card varfam"><h5><span class="dot" style="background:var(--accent)"></span>Vigilância</h5><p>câmeras no hexágono e na vizinhança imediata</p></div>
+        <div class="card varfam"><h5><span class="dot d"></span>Domínio territorial</h5><p>CV, Milícia, TCP ou sem domínio identificado</p></div>
+        <div class="card varfam"><h5><span class="dot b"></span>Efeito fixo de área</h5><p>a identidade de cada área FM (heterogeneidade)</p></div>
+      </div>
+      <p class="formula-note" data-anim style="--i:5; margin-top:1rem">Variável-resposta <span style="color:var(--accent)">ŷ</span> = 1 se ocorre ao menos um roubo no hexágono na semana prevista.</p>
+    </div>
+  </section>
+
+  <!-- ============ P4 · DA ESTATÍSTICA À POLÍTICA PÚBLICA ============ -->
+  <section class="slide" data-slide>
+    <div class="stage">
+      <div class="eyebrow" data-anim style="--i:0">Da estatística à decisão</div>
+      <h2 class="head" data-anim style="--i:1">Coeficientes viram <span class="grad">política pública</span></h2>
+      <p class="lead" data-anim style="--i:2">A IA lê cada <em>odds ratio</em>, cruza com as estatísticas do território e com os limites reais — <b style="color:var(--ink)">600 agentes</b> e o mandato de cada órgão — e escreve a recomendação em linguagem de gestor.</p>
+      <div class="grid" data-anim style="--i:3; gap:0.7rem; margin-top:1.5rem">
+        <div class="coef-row"><div class="or-badge or-up">2,2×<small>MILÍCIA</small></div><div class="pol"><b>Território sob domínio de milícia</b> concentra roubo de rua. → patrulha ostensiva no pico + reparo de iluminação <span class="kv">(GM-Rio + RioLuz)</span>.</div></div>
+        <div class="coef-row"><div class="or-badge or-down">0,17×<small>COMANDO V.</small></div><div class="pol"><b>Sob domínio do CV</b>, pouco crime de rua é registrado — controle territorial e subnotificação. → não deslocar efetivo ostensivo para cá; tratar como <b>inteligência, não presença</b>.</div></div>
+        <div class="coef-row"><div class="or-badge or-up">1,4×<small>VIZINHANÇA</small></div><div class="pol"><b>O crime contagia o entorno.</b> → cobrir os hexágonos vizinhos ao hotspot e sustentar a <b>permanência mínima de 90 dias</b>.</div></div>
+        <div class="coef-row"><div class="or-badge or-flat">17–20h<small>NOTURNO</small></div><div class="pol"><b>Pico noturno</b> nas estatísticas descritivas. → escala da FM <b>a pé</b> no horário e no trecho de maior fluxo de pedestres.</div></div>
+      </div>
+      <p class="lead muted" data-anim style="--i:4; margin-top:1.4rem; font-size:0.96rem">Prioriza onde <b style="color:var(--ink-2)">cada esforço reduz mais crime</b> — recomendação humanizada, otimizada sob restrição e <b style="color:var(--ink-2)">rastreável até o coeficiente</b>.</p>
+    </div>
+  </section>
+
+  <!-- ============ 9 · IA QUE MOSTRA O PORQUÊ ============ -->
+  <section class="slide" data-slide>
+    <div class="stage split">
+      <div class="col">
+        <div class="eyebrow" data-anim style="--i:0">Confiança</div>
+        <h2 class="head" data-anim style="--i:1">Uma IA que mostra <span class="grad">de onde tirou cada conclusão</span></h2>
+        <p class="lead" data-anim style="--i:2">Nada de caixa-preta. Cada afirmação do relatório carrega três coisas:</p>
+        <ul class="clean" data-anim style="--i:3; margin-top:1.4rem">
+          <li><span class="mk">①</span><span><b style="color:var(--ink)">A citação literal</b> da fonte (RELINT ou denúncia), clicável.</span></li>
+          <li><span class="mk">②</span><span><b style="color:var(--ink)">O nível de confiança</b> — e um aviso "indício" quando o dado é texto livre.</span></li>
+          <li><span class="mk">③</span><span><b style="color:var(--ink)">Linguagem de negócio</b> — o porquê explicado a um gestor, não a um engenheiro.</span></li>
+        </ul>
+        <p class="lead" data-anim style="--i:4; margin-top:1.3rem">Um <b class="hl-dinamica">copiloto</b> lateral responde perguntas e propõe reescritas — que o analista aceita, ajusta ou rejeita.</p>
+      </div>
+      <div class="col" data-anim style="--i:3">
+        <div class="screen">
+          <div class="bar"><i></i><i></i><i></i><span>provenance.card</span></div>
+          <div class="body" style="height:auto; padding:1.1rem">
+            <div style="font-size:0.92rem; color:var(--ink); line-height:1.5">"A dinâmica criminal observada indica uso de <b class="hl-dinamica">motocicletas como rota de fuga</b> no entorno da estação."</div>
+            <div class="cite" style="margin-top:0.9rem; font-size:0.72rem">RI_020 · Presidente Vargas — Campo de Santana<br/>"…evasão por motocicleta em direção ao Campo de Santana…"</div>
+            <div style="display:flex; gap:0.5rem; margin-top:0.9rem; flex-wrap:wrap">
+              <span class="chip" style="font-size:0.68rem; color:var(--fator); border-color:rgba(244,177,60,0.4)">⚠ indício, não fato</span>
+              <span class="chip" style="font-size:0.68rem; color:var(--ok); border-color:rgba(87,199,154,0.4)">confiança média</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 10 · IA RESPONSÁVEL ============ -->
+  <section class="slide" data-slide>
+    <div class="stage">
+      <div class="eyebrow" data-anim style="--i:0">Não negociável</div>
+      <h2 class="head" data-anim style="--i:1">IA responsável em segurança pública</h2>
+      <p class="lead" data-anim style="--i:2">Guardrails que atravessam todo o produto — porque o tema exige.</p>
+      <div class="grid g3" data-anim style="--i:3; margin-top:2rem">
+        <div class="card"><h4 style="font-size:1.05rem; margin-bottom:0.4rem">🧑‍⚖️ Decisão final humana</h4><p class="muted" style="font-size:0.9rem; line-height:1.45">O sistema entrega rascunho, score e justificativa. A equipe valida e decide.</p></div>
+        <div class="card"><h4 style="font-size:1.05rem; margin-bottom:0.4rem">🏙️ Ambiente, não indivíduo</h4><p class="muted" style="font-size:0.9rem; line-height:1.45">Foco em fatores urbanos e alocação de patrulha — nunca vigilância de pessoas.</p></div>
+        <div class="card"><h4 style="font-size:1.05rem; margin-bottom:0.4rem">📑 Indício ≠ fato</h4><p class="muted" style="font-size:0.9rem; line-height:1.45">Texto livre é sinalizado como incerto e sempre cita a fonte.</p></div>
+        <div class="card"><h4 style="font-size:1.05rem; margin-bottom:0.4rem">🚫 Nunca inventar dado</h4><p class="muted" style="font-size:0.9rem; line-height:1.45">Camada ausente é declarada; score com dado insuficiente vira baixa confiança.</p></div>
+        <div class="card"><h4 style="font-size:1.05rem; margin-bottom:0.4rem">🔒 Privacidade &amp; LGPD</h4><p class="muted" style="font-size:0.9rem; line-height:1.45">Trabalho com agregados territoriais; minimização de dado pessoal.</p></div>
+        <div class="card"><h4 style="font-size:1.05rem; margin-bottom:0.4rem">⚖️ Sem viés de realimentação</h4><p class="muted" style="font-size:0.9rem; line-height:1.45">Priorização por taxa, não só por contagem bruta, para não punir quem mais denuncia.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 11 · O PRODUTO EM TELAS ============ -->
+  <section class="slide" data-slide>
+    <div class="stage">
+      <div class="eyebrow" data-anim style="--i:0">O produto</div>
+      <h2 class="head" data-anim style="--i:1">Três telas, um fluxo de decisão</h2>
+      <div class="grid g3" data-anim style="--i:2; margin-top:1.8rem">
+        <!-- mapa -->
+        <div>
+          <div class="screen">
+            <div class="bar"><i></i><i></i><i></i><span>mapa · segmentos quentes</span></div>
+            <div class="body">
+              <div class="map-mock">
+                <div class="heat" style="width:70px;height:70px;background:var(--mancha);opacity:0.7;top:30px;left:40px"></div>
+                <div class="heat" style="width:48px;height:48px;background:var(--mancha);opacity:0.55;top:90px;left:120px"></div>
+                <div class="heat" style="width:36px;height:36px;background:var(--fator);opacity:0.6;top:50px;left:150px"></div>
+                <div style="position:absolute;inset:8px;border:1.5px dashed rgba(70,184,223,0.6);border-radius:10px"></div>
+                <div style="position:absolute;top:44px;left:54px;width:7px;height:7px;border-radius:50%;background:var(--bingo);box-shadow:0 0 10px var(--bingo)"></div>
+                <div style="position:absolute;top:100px;left:200px;width:6px;height:6px;border-radius:50%;border:1.5px solid var(--dinamica)"></div>
+              </div>
+            </div>
+          </div>
+          <div class="cap"><b>Mapa de calor</b> + polígono da área, câmeras e bingos</div>
+        </div>
+        <!-- coincidencias -->
+        <div>
+          <div class="screen">
+            <div class="bar"><i></i><i></i><i></i><span>painel · coincidências</span></div>
+            <div class="body">
+              <div class="row"><span class="score">8.5</span><div class="bar-mini"><i style="width:85%"></i></div></div>
+              <div class="row"><span class="score" style="color:var(--mancha)">7.2</span><div class="bar-mini"><i style="width:72%"></i></div></div>
+              <div class="row"><span class="score" style="color:var(--fator)">6.1</span><div class="bar-mini"><i style="width:61%"></i></div></div>
+              <div class="row"><span class="score" style="color:var(--ink-3)">4.8</span><div class="bar-mini"><i style="width:48%"></i></div></div>
+              <div style="display:flex;gap:0.35rem;margin-top:0.6rem"><span class="dot m"></span><span class="dot f"></span><span class="dot d"></span><span class="kv" style="font-size:0.66rem">3 camadas no mesmo trecho</span></div>
+            </div>
+          </div>
+          <div class="cap"><b>Coincidências</b> ranqueadas por score + justificativa</div>
+        </div>
+        <!-- copiloto -->
+        <div>
+          <div class="screen">
+            <div class="bar"><i></i><i></i><i></i><span>copiloto</span></div>
+            <div class="body">
+              <div class="bubble u">Qual o horário de pico aqui?</div>
+              <div class="bubble a">Os roubos concentram-se entre <b style="color:var(--ink)">17h e 20h</b>, às quartas e sextas.
+                <div class="cite">tool: matriz_temporal(area=20)</div>
+              </div>
+              <div class="bubble u">Reescreva destacando a Uruguaiana</div>
+            </div>
+          </div>
+          <div class="cap"><b>Copiloto</b> consulta tabelas e propõe reescritas</div>
+        </div>
+      </div>
+      <p class="lead muted" data-anim style="--i:3; margin-top:1.4rem; font-size:0.95rem; text-align:center">Edição inline em cada campo · banner permanente de <b style="color:var(--fator)">"rascunho — requer validação humana"</b> · export em DOCX.</p>
+    </div>
+  </section>
+
+  <!-- ============ 12 · ROADMAP ============ -->
+  <section class="slide" data-slide>
+    <div class="stage">
+      <div class="eyebrow" data-anim style="--i:0">Roadmap</div>
+      <h2 class="head" data-anim style="--i:1">De relatório a <span class="grad">sistema nervoso da segurança municipal</span></h2>
+      <div class="timeline" data-anim style="--i:2; margin-top:1.4rem">
+        <div class="axis"></div>
+        <div class="stops">
+          <div class="stop">
+            <div class="node" style="background:var(--ok); box-shadow:0 0 14px var(--ok)"></div>
+            <div class="phase">Hoje · MVP</div>
+            <div class="card" style="border-color:rgba(87,199,154,0.3)">
+              <h4><span class="badge-now">ENTREGUE</span></h4>
+              <p>Relatório das 8 áreas, motor do "bingo", copiloto auditável, mapa preditivo e export DOCX.</p>
+              <span class="gain">→ horas de trabalho viram minutos</span>
+            </div>
+          </div>
+          <div class="stop">
+            <div class="node" style="background:var(--dinamica); box-shadow:0 0 14px var(--dinamica)"></div>
+            <div class="phase">Onda 1</div>
+            <div class="card" style="border-color:rgba(86,177,234,0.3)">
+              <h4><span class="dot d"></span>Sensores sociais</h4>
+              <p>Integração com <b style="color:var(--ink)">X</b> e <b style="color:var(--ink)">Meta</b> — acordo de APIs para coleta de comentários de publicações públicas. Menções a crimes e à FM viram <b style="color:var(--ink)">alertas geolocalizados</b>, separando denúncia de ruído.</p>
+              <span class="gain">→ a rua como sensor em tempo quase real</span>
+            </div>
+          </div>
+          <div class="stop">
+            <div class="node" style="background:var(--fator); box-shadow:0 0 14px var(--fator)"></div>
+            <div class="phase">Onda 2</div>
+            <div class="card" style="border-color:rgba(244,177,60,0.3)">
+              <h4><span class="dot f"></span>Dados públicos</h4>
+              <p>Onde há <b style="color:var(--ink)">tiroteios</b> (Fogo Cruzado), chamados da <b style="color:var(--ink)">Central 1746</b> e denominador populacional — novas camadas que validam fatores e qualificam o score.</p>
+              <span class="gain">→ escolhas de ação mais assertivas</span>
+            </div>
+          </div>
+          <div class="stop">
+            <div class="node" style="background:var(--mancha); box-shadow:0 0 14px var(--mancha)"></div>
+            <div class="phase">Onda 3</div>
+            <div class="card" style="border-color:rgba(255,93,95,0.3)">
+              <h4><span class="dot m"></span>Ponte com o Estado</h4>
+              <p>A inteligência municipal vira <b style="color:var(--ink)">insumo para a segurança estadual</b> — facções, tiroteios e migração do crime cruzam a fronteira município ↔ Estado (PMERJ).</p>
+              <span class="gain">→ coordenação entre níveis de governo</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<!-- chrome -->
+<div class="hud brand"><span class="dot b"></span><b>CompStat Rio</b></div>
+<div class="hud count"><b id="cur">1</b> / <span id="tot">12</span></div>
+<div class="nav">
+  <button id="prev" title="Anterior (←)">‹</button>
+  <button id="next" title="Próximo (→)">›</button>
+</div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('[data-slide]'));
+  const total = slides.length;
+  let idx = 0;
+
+  const progress = document.getElementById('progress');
+  const cur = document.getElementById('cur');
+  const tot = document.getElementById('tot');
+  tot.textContent = total;
+
+  function render() {
+    slides.forEach((s, i) => s.classList.toggle('active', i === idx));
+    progress.style.width = ((idx) / (total - 1) * 100) + '%';
+    cur.textContent = idx + 1;
+    if (location.hash !== '#' + (idx + 1)) {
+      history.replaceState(null, '', '#' + (idx + 1));
+    }
+  }
+  function go(n) { idx = Math.max(0, Math.min(total - 1, n)); render(); }
+  const next = () => go(idx + 1);
+  const prev = () => go(idx - 1);
+
+  document.getElementById('next').onclick = next;
+  document.getElementById('prev').onclick = prev;
+
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', ' ', 'PageDown'].includes(e.key)) { e.preventDefault(); next(); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); prev(); }
+    else if (e.key === 'Home') { go(0); }
+    else if (e.key === 'End') { go(total - 1); }
+    else if (e.key.toLowerCase() === 'f') { toggleFs(); }
+  });
+
+  // touch / swipe
+  let tx = 0;
+  document.addEventListener('touchstart', (e) => { tx = e.changedTouches[0].clientX; }, { passive: true });
+  document.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].clientX - tx;
+    if (Math.abs(dx) > 50) { dx < 0 ? next() : prev(); }
+  }, { passive: true });
+
+  // fullscreen
+  function toggleFs() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+    else document.exitFullscreen?.();
+  }
+  document.getElementById('fsbtn').onclick = toggleFs;
+
+  // deep-link inicial
+  const start = parseInt((location.hash || '').replace('#', ''), 10);
+  if (start >= 1 && start <= total) idx = start - 1;
+  render();
+</script>
+</body>
+</html>

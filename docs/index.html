@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CompStat Rio — Centro de Comando · Visão Geral</title>
+<meta name="description" content="Plataforma de inteligência territorial de segurança pública do Rio. Visão geral dos dados, do modelo das 3 camadas e do conceito do bingo.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700;800&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/compstat.css">
+</head>
+<body>
+<div class="progress" aria-hidden="true"></div>
+
+<nav class="nav">
+  <a class="brand" href="index.html">COMPSTAT<span class="dot">://</span><b>RIO</b></a>
+  <button class="nav-toggle" aria-expanded="false" aria-controls="tabs">MENU</button>
+  <div class="nav-tabs" id="tabs">
+    <a href="index.html" aria-current="page"><span class="ix">00</span>Visão geral</a>
+    <a href="01-arquitetura-de-dados.html"><span class="ix">01</span>Dados</a>
+    <a href="02-utilidades-por-fonte.html"><span class="ix">02</span>Utilidades</a>
+    <a href="03-possibilidades.html"><span class="ix">03</span>Possibilidades</a>
+    <a href="04-como-comecar.html"><span class="ix">04</span>Como começar</a>
+  </div>
+</nav>
+
+<!-- ===================== HERO ===================== -->
+<header class="hero wrap">
+  <div class="hero-grid">
+    <div>
+      <span class="kicker reveal">Plataforma de inteligência territorial</span>
+      <h1 class="h-xl reveal" data-d="1">CompStat<br><span class="stroke">Rio</span></h1>
+      <p class="lede reveal" data-d="2">Cruza camadas de dados de segurança pública, calcula um <strong>score de prioridade</strong> por trecho e gera um relatório de decisão que a equipe humana valida antes de agir. A inteligência está em sobrepor, no mesmo ponto do mapa, <strong style="color:var(--mancha)">onde</strong> o crime acontece, <strong style="color:var(--fator)">qual condição urbana</strong> o facilita e <strong style="color:var(--dinamica)">qual a dinâmica</strong> por trás dele.</p>
+      <div class="hero-cta reveal" data-d="3">
+        <a class="btn btn--primary" href="01-arquitetura-de-dados.html">Explorar os dados →</a>
+        <a class="btn" href="04-como-comecar.html">Como começar</a>
+      </div>
+      <div class="layer-key reveal" data-d="4">
+        <span class="chip l-mancha"><span class="swatch"></span>Mancha criminal</span>
+        <span class="chip l-fator"><span class="swatch"></span>Fator urbano</span>
+        <span class="chip l-dinamica"><span class="swatch"></span>Dinâmica criminal</span>
+      </div>
+    </div>
+    <div class="reveal" data-d="3">
+      <div class="bingo">
+        <div class="crosshair"></div>
+        <div class="ring r1"></div>
+        <div class="ring r2"></div>
+        <div class="ring r3"></div>
+        <div class="core"></div>
+      </div>
+      <p class="faint" style="text-align:center;font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;margin-top:34px">3 camadas → 1 coincidência</p>
+    </div>
+  </div>
+</header>
+
+<!-- ===================== STAT BAND ===================== -->
+<section class="wrap" style="padding-block:10px 28px">
+  <div class="statband reveal">
+    <div class="stat l-mancha"><div class="num" data-target="115354">0</div><div class="lab">Ocorrências</div><div class="sub">roubos · 2020–2024</div></div>
+    <div class="stat l-dinamica"><div class="num" data-target="18003">0</div><div class="lab">Denúncias</div><div class="sub">Disque Denúncia</div></div>
+    <div class="stat l-fator"><div class="num" data-target="2085">0</div><div class="lab">Fatores urbanos</div><div class="sub">registros de campo</div></div>
+    <div class="stat l-bingo"><div class="num" data-target="8">0</div><div class="lab">Áreas c/ polígono</div><div class="sub">= 8 RELINTs</div></div>
+    <div class="stat l-dinamica"><div class="num" data-target="1628">0</div><div class="lab">Territórios</div><div class="sub">domínio de facção</div></div>
+    <div class="stat l-fator"><div class="num" data-target="23332">0</div><div class="lab">Pessoas (CPSR)</div><div class="sub">censo 2020/22/24</div></div>
+  </div>
+  <p class="faint" style="font-family:var(--mono);font-size:.72rem;margin-top:12px;letter-spacing:.04em">▸ números extraídos diretamente dos arquivos do repositório · análise de 24/05/2026</p>
+</section>
+
+<!-- ===================== O PROBLEMA ===================== -->
+<section class="section wrap">
+  <div class="section-head reveal"><span class="six">§ 00.1</span><h2>O problema, em uma frase</h2></div>
+  <div class="grid cols-2">
+    <div class="reveal">
+      <p>A operação do CompStat depende de <strong>cruzamento manual</strong> de dados para 22 áreas monitoradas. Ocorrências georreferenciadas, denúncias qualitativas, fatores urbanos e relatórios de inteligência vivem em <strong>silos</strong> — e não há mecanismo que sobreponha automaticamente as camadas.</p>
+      <p>A compilação mecânica de planilhas consome o tempo que deveria ir para a <strong>interpretação e a decisão estratégica</strong>. O produto ataca exatamente o passo de compilação e cruzamento, devolvendo tempo de análise à equipe.</p>
+    </div>
+    <div class="reveal" data-d="1">
+      <div class="callout callout--info"><span class="ic">🎯</span><p><strong>A regra de ouro:</strong> quando <strong style="color:var(--mancha)">mancha</strong>, <strong style="color:var(--fator)">fator urbano</strong> e <strong style="color:var(--dinamica)">dinâmica</strong> coincidem no mesmo segmento, o sistema dispara um <strong style="color:var(--bingo)">"bingo"</strong> e atribui prioridade máxima.</p></div>
+      <div class="callout callout--ok"><span class="ic">✅</span><p>Exemplo de saída: <em>"Score 8.5/10 — trecho X tem roubos noturnos, poste apagado e rota de fuga citada em RELINT."</em></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== AS 3 CAMADAS ===================== -->
+<section class="section wrap">
+  <div class="section-head reveal"><span class="six">§ 00.2</span><h2>As três camadas do mapa</h2></div>
+  <div class="grid cols-3">
+    <article class="card l-mancha reveal">
+      <span class="tag">🔴 Quantitativa</span>
+      <h3>Mancha criminal</h3>
+      <p class="meta">onde · quando</p>
+      <p>Concentração geográfica e temporal de roubos e furtos. Horários de pico e densidade por trecho. <strong>115 mil ocorrências georreferenciadas.</strong></p>
+    </article>
+    <article class="card l-fator reveal" data-d="1">
+      <span class="tag">🟡 Ambiental</span>
+      <h3>Fator urbano</h3>
+      <p class="meta">o quê · quem resolve</p>
+      <p>Condições que facilitam o crime oportunista: iluminação deficiente, vegetação encobrindo postes, calçada obstruída, retenção de tráfego. <strong>Cada fator já vem com o órgão responsável.</strong></p>
+    </article>
+    <article class="card l-dinamica reveal" data-d="2">
+      <span class="tag">🔵 Qualitativa</span>
+      <h3>Dinâmica criminal</h3>
+      <p class="meta">como · quem</p>
+      <p>O modus operandi: perfis, rotas de fuga, pontos de receptação, controle territorial. Vem de <strong>Disque Denúncia, RELINTs e mapa de facções.</strong></p>
+    </article>
+  </div>
+  <p class="muted reveal" style="margin-top:18px">Quando as três se sobrepõem no mesmo segmento viário, o score sobe proporcionalmente ao número e ao peso das coincidências. O resultado vai direto ao mapa como identificador visual.</p>
+</section>
+
+<!-- ===================== INVENTÁRIO ===================== -->
+<section class="section wrap">
+  <div class="section-head reveal"><span class="six">§ 00.3</span><h2>Inventário dos dados</h2></div>
+  <p class="lede reveal">Nove fontes (5 do modelo original + 4 de apoio) + uma externa. Tudo verificado nos arquivos.</p>
+  <div class="grid cols-3" style="margin-top:26px">
+    <article class="card l-mancha reveal"><span class="tag">Mancha</span><h3>Ocorrências criminais</h3><p class="meta">df_ocorrencias_tratado.csv · 24 MB</p><p class="big">115.354</p><p>Roubos georreferenciados, 2020–2024, com hora e dia da semana.</p></article>
+    <article class="card l-dinamica reveal" data-d="1"><span class="tag">Dinâmica</span><h3>Disque Denúncia</h3><p class="meta">disk_denuncia.csv · 19 MB</p><p class="big">18.003</p><p>Denúncias com relato livre e classificação. Cobre 2019–2026.</p></article>
+    <article class="card l-fator reveal" data-d="2"><span class="tag">Fator</span><h3>Fatores urbanos</h3><p class="meta">fatores_urbanos.csv</p><p class="big">2.085</p><p>Fator + órgão responsável + subárea, georreferenciado.</p></article>
+    <article class="card l-suporte reveal"><span class="tag">Suporte</span><h3>Polígonos FM</h3><p class="meta">sh_area_forca/ · Shapefile</p><p class="big">8 áreas</p><p>Áreas de operação da Força Municipal. WGS84.</p></article>
+    <article class="card l-dinamica reveal" data-d="1"><span class="tag">Dinâmica / molde</span><h3>RELINTs</h3><p class="meta">relints/ · 8 .docx</p><p class="big">8</p><p>Relatórios de inteligência por área — o gabarito do entregável.</p></article>
+    <article class="card l-suporte reveal" data-d="2"><span class="tag">Suporte</span><h3>Câmeras</h3><p class="meta">cameras_areas_fm.csv</p><p class="big">985</p><p>Câmeras em 9 áreas, com id_trecho de logradouro.</p></article>
+    <article class="card l-dinamica reveal"><span class="tag">Dinâmica</span><h3>Domínio territorial</h3><p class="meta">dominio_territorial.csv</p><p class="big">1.628</p><p>Territórios por facção (CV, Milícia, TCP, ADA). Fonte colaborativa.</p></article>
+    <article class="card l-fator reveal" data-d="1"><span class="tag">Fator (SMAS)</span><h3>Censo Pop. Sit. Rua</h3><p class="meta">CPSR_2020_2022_2024.xlsx</p><p class="big">23.332</p><p>Microdados de 3 ondas, 167 variáveis, georreferenciados.</p></article>
+    <article class="card l-fator reveal" data-d="2"><span class="tag">Validação · externo</span><h3>Central 1746</h3><p class="meta">BigQuery (DataLake Rio)</p><p class="big">pública</p><p>Chamados de serviço público — valida fatores urbanos.</p></article>
+  </div>
+  <div class="callout callout--warn reveal" style="margin-top:24px"><span class="ic">⚠️</span><p><strong>Achado-chave de escopo:</strong> as <strong>8 áreas</strong> com polígono batem <strong>1:1 com os 8 RELINTs</strong> — a fatia de dados mais completa do repositório. São o candidato natural a MVP. <a class="inline" href="04-como-comecar.html">Ver como começar →</a></p></div>
+</section>
+
+<!-- ===================== NAVEGAR ===================== -->
+<section class="section wrap">
+  <div class="section-head reveal"><span class="six">§ 00.4</span><h2>Navegar a documentação</h2></div>
+  <div class="grid cols-2">
+    <a class="card l-dinamica reveal" href="01-arquitetura-de-dados.html"><span class="tag">§ 01 →</span><h3>Arquitetura de dados</h3><p>Schema real de cada fonte, modelo de dados, chaves de junção e a tabela consolidada de qualidade.</p></a>
+    <a class="card l-fator reveal" data-d="1" href="02-utilidades-por-fonte.html"><span class="tag">§ 02 →</span><h3>Utilidade por fonte</h3><p>As 4 perguntas do CompStat × dados, os 6 módulos do relatório e a Matriz Fatores×Órgãos.</p></a>
+    <a class="card l-mancha reveal" href="03-possibilidades.html"><span class="tag">§ 03 →</span><h3>Possibilidades</h3><p>Desafio principal, 4 desafios extras e ideias novas — cada um com viabilidade e bloqueios.</p></a>
+    <a class="card l-bingo reveal" data-d="1" href="04-como-comecar.html"><span class="tag">§ 04 →</span><h3>Como começar</h3><p>Definição de MVP, sequenciamento em ondas, decisões em aberto e checklist.</p></a>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="section-head" style="margin-bottom:6px"><span class="six">⚠</span><h2 style="font-size:clamp(1.4rem,2.6vw,2rem)">Guardrails de IA responsável</h2></div>
+    <p class="muted">Projeto de segurança pública. Estas regras não são opcionais.</p>
+    <div class="gr">
+      <div><b>Decisão final humana</b>O sistema gera rascunho, score e justificativa. A equipe valida antes de qualquer ação.</div>
+      <div><b>Foco no ambiente</b>Fatores urbanos e alocação de patrulha — não vigilância de indivíduos.</div>
+      <div><b>Texto livre é indício</b>Disque Denúncia e RELINT sinalizam incerteza e citam a fonte.</div>
+      <div><b>Nunca inventar dado</b>Camada ausente é declarada; dado insuficiente = baixa confiança.</div>
+      <div><b>Privacidade / LGPD</b>Trabalhar com agregados territoriais; minimizar dado pessoal.</div>
+      <div><b>Transparência</b>Toda priorização tem justificativa legível por humano.</div>
+    </div>
+    <p class="sig">COMPSTAT://RIO · Claude Impact Lab 2026 · documentação gerada a partir dos dados reais do repositório</p>
+  </div>
+</footer>
+
+<div class="grain" aria-hidden="true"></div>
+<script src="assets/compstat.js"></script>
+</body>
+</html>
